@@ -1,0 +1,72 @@
+[
+  {
+  "id": "trend-1",
+  "category": "Linkedin",
+  "title": "Professional LinkedIn Executive Profile Photo Transformation",
+  "description": "Transform your selfie into an executive-level LinkedIn profile photo while preserving your exact facial identity. Includes professional studio lighting, business-formal attire, modesty-appropriate styling, and a modern executive office background.",
+  "prompt": "Professional LinkedIn Executive Profile Photo Transformation\n\nTransform my selfie into an executive-level professional profile photo suitable for C-suite LinkedIn profiles.\n\nCRITICAL REQUIREMENTS:\nPRESERVE THE ORIGINAL FACE COMPLETELY - Do not alter, modify, or change any facial features, face shape, skin tone, or facial characteristics whatsoever.\nMaintain the person's EXACT facial appearance and identity.\nKeep the original face 100% intact and unmodified.\n\nPhotography Style:\nDramatic yet professional studio lighting with soft, flattering shadows.\nConfident and approachable posture.\nExecutive presence with warm professionalism.\n\nAttire:\nDark navy blue blazer.\nProfessional business formal style.\nModest and conservative styling.\n\nModesty Requirements (if wearing hijab/headscarf):\nKeep hijab/headscarf elegant and professional.\nEnsure neck area remains fully covered.\nArms must be fully covered.\nNo skin showing except face and hands.\nConservative neckline.\n\nBackground:\nModern executive office setting.\nLarge windows with natural light.\nSoftly blurred bokeh (shallow depth of field).\nMinimalist, neutral, professional color palette.\n\nTechnical Specifications:\nHigh-resolution, sharp facial details.\nProfessional color grading.\nLinkedIn-optimized composition.\nHead and shoulders framing.",
+  "imageSrc": "/trending-image/linkedin-profile.jpeg",
+  "aiTool": "gemini",
+  "sourceUrl": ""
+},
+{
+  "id": "trend-2",
+  "category": "Instagram",
+  "title": "Fashion Editorial Golden Sunlight Portrait",
+  "description": "Create a high-end fashion editorial portrait with dramatic golden-hour lighting, low-angle composition, and the exact same face as the reference image. Perfect for aesthetic Instagram feeds.",
+  "prompt": "Fashion Editorial Portrait of an individual (face same as reference) seated on a gray floor, leaning against a simple beige wall. Medium shot, low angle.\nOutfit: Same as uploaded reference.\nThe individual has a direct, contemplative gaze.\n\nLighting: Intense, directional golden sunlight from the right side (sunset/late afternoon), creating strong raking light and deep, sharp shadows.\n\nOverall Style: High-end fashion editorial aesthetic, warm cinematic tones, refined color grading, and realistic texture.",
+  "imageSrc": "/trending-image/instagram-fashion.jpeg",
+  "aiTool": "gemini",
+  "sourceUrl": ""
+},
+  {
+  "id": "trend-3",
+  "category": "Food",
+  "title": "Hyper-Realistic Top-Down Dinner Plate",
+  "description": "A hyper-realistic, minimalist top-down dinner plate featuring a balanced meal. All required ingredients (dough, tomato paste, onion, yogurt) are clearly visible. Generates an English description below the image.",
+  "prompt": "Create a hyper-realistic, top-down (bird's-eye) photo of a dinner plate on a clean, minimalist white table with a white round serving plate.\n\nThe meal must be a balanced, real-food dinner containing protein, healthy fats, and vegetables.\nUse only whole, natural, healthy ingredients.\n\nThe food presentation must be elegant, clean, restaurant-quality, with realistic textures, accurate colors, and soft natural lighting.\n\nAfter creating the image, add a short description below the image.\nThe description must:\n• List all ingredients clearly\n• Give a simple dinner idea\n• Be written in the same language as the ingredients (Default language = English)\n\nYou MUST include ALL of the following ingredients on the plate, clearly visible:\nINGREDIENTS: dough, tomato paste, onion, yogurt",
+  "imageSrc": "/trending-image/food-table.png",
+  "aiTool": "gemini",
+  "sourceUrl": ""
+},
+  {
+    "id": "trend-4",
+    "category": "Software",
+    "title": "Modern Dashboard UI Design",
+    "description": "Design a clean, modern dashboard interface for SaaS applications",
+    "prompt": "Modern SaaS dashboard UI design, dark mode, glassmorphism elements, data visualization charts, clean typography, minimalist sidebar, responsive layout, Figma design",
+    "imageSrc": "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop",
+    "aiTool": "gemini",
+    "sourceUrl": ""
+  },
+  {
+  "id": "trend-5",
+  "category": "Instagram",
+  "title": "High-Fashion Cinematic Street Style Portrait",
+  "description": "A luxury editorial-style street fashion photograph with cinematic motion blur, natural overcast lighting, muted tones, film-like texture, and the model's original face preserved.",
+  "prompt": "Slim stylish person in a busy city street with a moving crowd creating a motion blur effect. The person is wearing an oversized neutral-toned textured blazer with a minimalist fashion aesthetic, natural makeup, and messy hair strands framing the face. Cinematic sharp focus on the model while the background is in motion. Full body shot captured with a 35mm lens, f/2.8, shutter speed 1/30 for motion effect. Natural soft overcast daylight with diffused lighting. Color grading with muted neutral tones, lifted blacks, soft cinematic matte finish, and slight film grain for a luxury editorial look. Ultra-detailed fabrics and realistic skin texture. High-fashion street style photograph in 8k resolution.\n\nSecond pose: Model sitting casually on a city curb, legs slightly bent, elbows resting on knees, one hand playing with hair, looking toward the camera with a soft confident gaze, blurred traffic and people moving behind.\n\nCRITICAL RULE: Never change the face in the photo. Preserve all original facial features and identity exactly.",
+  "imageSrc": "/trending-image/instagram-street-fashion.png",
+  "aiTool": "gemini",
+  "sourceUrl": ""
+},
+  {
+    "id": "trend-6",
+    "category": "Math",
+    "title": "Step-by-Step Math Solutions",
+    "description": "Solve complex math problems with detailed explanations",
+    "prompt": "Solve this calculus problem step-by-step: Find the derivative of f(x) = 3x^2 + 2x - 5, explain each step clearly, include the power rule, show all work",
+    "imageSrc": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop",
+    "aiTool": "chatgpt",
+    "sourceUrl": ""
+  },
+  {
+    "id": "trend-7",
+    "category": "Design",
+    "title": "Brand Identity Package",
+    "description": "Create comprehensive brand identity guidelines for businesses",
+    "prompt": "Design a complete brand identity package for a tech startup, include logo variations, color palette, typography system, brand guidelines, mockups, modern and minimalist style",
+    "imageSrc": "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&auto=format&fit=crop",
+    "aiTool": "gemini",
+    "sourceUrl": ""
+  }
+]

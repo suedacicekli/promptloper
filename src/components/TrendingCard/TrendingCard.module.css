@@ -1,0 +1,55 @@
+.card {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
+  border-radius: 15px;
+  width: 195px;
+  height: 426px;
+  transition: width 0.3s ease;
+}
+
+.card:hover {
+  width: 497px;
+}
+
+.imageWrapper {
+  position: absolute;
+  inset: 0;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent, transparent);
+  z-index: 1;
+}
+
+.badgeContainer {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge {
+  background-color: #C1121F;
+  color: #FFFFFF;
+  font-weight: 500;
+  border: none;
+  height: 24px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}

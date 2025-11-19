@@ -1,0 +1,92 @@
+[
+  {
+    "id": "prompt-1",
+    "category": "Food",
+    "title": "Recipe Photo Styling",
+    "description": "Style and photograph recipes for cookbooks and food blogs",
+    "prompt": "Food styling for recipe photography, rustic wooden background, natural ingredients arranged artistically, soft window light, overhead shot, cookbook quality, appetizing composition",
+    "imageSrc": "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500",
+    "aiTool": "midjourney",
+    "height": 351
+  },
+  {
+    "id": "prompt-2",
+    "category": "Instagram",
+    "title": "Story Template Series",
+    "description": "Create cohesive Instagram story templates for daily posts",
+    "prompt": "Design 7 Instagram story templates for a week, consistent aesthetic, modern fonts, animated elements, swipe-up CTAs, brand colors, editable in Canva",
+    "imageSrc": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=500",
+    "aiTool": "gemini",
+    "height": 223
+  },
+  {
+    "id": "prompt-3",
+    "category": "Photography",
+    "title": "Product Photography Setup",
+    "description": "Professional product photography for e-commerce",
+    "prompt": "E-commerce product photography, white background, multiple angles, soft diffused lighting, high detail, shadow removal, commercial quality, 4k resolution",
+    "imageSrc": "https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=500",
+    "aiTool": "midjourney",
+    "height": 475
+  },
+  {
+    "id": "prompt-4",
+    "category": "Software",
+    "title": "API Documentation Generator",
+    "description": "Generate comprehensive API documentation automatically",
+    "prompt": "Create API documentation for REST endpoints, include request/response examples, authentication methods, error codes, rate limits, code snippets in multiple languages, interactive examples",
+    "imageSrc": "https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=500",
+    "aiTool": "chatgpt",
+    "height": 262
+  },
+  {
+    "id": "prompt-5",
+    "category": "Homework",
+    "title": "Research Paper Outline",
+    "description": "Structure research papers with proper academic formatting",
+    "prompt": "Generate a research paper outline on artificial intelligence ethics, include abstract, literature review, methodology, findings, discussion, conclusion, APA format, bibliography structure",
+    "imageSrc": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=500",
+    "aiTool": "chatgpt",
+    "height": 238
+  },
+  {
+    "id": "prompt-6",
+    "category": "Math",
+    "title": "Geometry Problem Solver",
+    "description": "Solve geometry problems with visual diagrams",
+    "prompt": "Solve geometry problem: Calculate the area of a triangle with sides 5cm, 12cm, 13cm, show the formula, draw a diagram, explain Heron's formula, provide step-by-step solution",
+    "imageSrc": "https://images.unsplash.com/photo-1509228627152-72ae9ae6848d?w=500",
+    "aiTool": "gemini",
+    "height": 326
+  },
+  {
+    "id": "prompt-7",
+    "category": "Design",
+    "title": "Landing Page Wireframe",
+    "description": "Create conversion-focused landing page wireframes",
+    "prompt": "Design a high-converting landing page wireframe for SaaS product, include hero section, features, testimonials, pricing, CTA buttons, mobile responsive, Figma file",
+    "imageSrc": "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500",
+    "aiTool": "gemini",
+    "height": 199
+  },
+  {
+    "id": "prompt-9",
+    "category": "Business",
+    "title": "Business Plan Template",
+    "description": "Create comprehensive business plans for startups",
+    "prompt": "Generate a business plan for a mobile app startup, include executive summary, market analysis, competitive landscape, revenue model, marketing strategy, financial projections",
+    "imageSrc": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=500",
+    "aiTool": "chatgpt",
+    "height": 261
+  },
+  {
+    "id": "prompt-10",
+    "category": "Art",
+    "title": "Digital Art Style Guide",
+    "description": "Create consistent digital art style references",
+    "prompt": "Digital illustration style guide, anime-inspired characters, vibrant color palette, lighting techniques, brush settings, layer structure, reference sheets, Procreate tutorial",
+    "imageSrc": "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=500",
+    "aiTool": "midjourney",
+    "height": 412
+  }
+]

@@ -1,0 +1,15 @@
+.nav {
+  width: 100%;
+  padding: 16px 0;
+  background-color: #000000;
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  object-fit: contain;
+}
