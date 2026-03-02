@@ -62,7 +62,7 @@ export default function SupportModal({ isOpen, onClose }: SupportModalProps) {
           </h2>
 
           <p className="text-gray-300 mb-6">
-            I'm glad you're finding these prompts useful! If you'd like to support this project, consider buying me a coffee ☕
+            I&apos;m glad you&apos;re finding these prompts useful! If you&apos;d like to support this project, consider buying me a coffee ☕
           </p>
 
           <div className="flex justify-center mb-4">
@@ -81,7 +81,7 @@ export default function SupportModal({ isOpen, onClose }: SupportModalProps) {
               htmlFor="dontShowAgain"
               className="text-sm text-gray-400 cursor-pointer select-none"
             >
-              Don't show this again
+              Don&apos;t show this again
             </label>
           </div>
 
