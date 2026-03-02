@@ -1,4 +1,10 @@
 # Cloudflare Pages configuration for Next.js
+# Note: This file is used for local development with `wrangler pages dev`
+# For GitHub deployments, configuration is managed in Cloudflare Dashboard
+
 name = "promptloper"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = ".vercel/output/static"
+
+# Pages-specific configuration
+[env.production]
+compatibility_date = "2024-01-01"
