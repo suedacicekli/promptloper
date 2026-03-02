@@ -250,6 +250,50 @@ To enable email submissions:
    const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID'
    ```
 
+## Deployment
+
+This project is configured for deployment on **Cloudflare Pages**.
+
+### Quick Deploy to Cloudflare
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Build for Cloudflare:**
+   ```bash
+   npm run pages:build
+   ```
+
+3. **Deploy:**
+
+   **Option A - GitHub (Recommended for production):**
+   - Push your code to GitHub
+   - Connect your repository at [Cloudflare Pages](https://dash.cloudflare.com)
+   - Automatic deployments on every push
+
+   **Option B - Wrangler CLI (Quick testing):**
+   ```bash
+   npx wrangler login
+   npm run deploy
+   ```
+
+### Available Deployment Scripts
+
+- `npm run pages:build` - Build for Cloudflare Pages
+- `npm run preview` - Preview in local Cloudflare environment
+- `npm run deploy` - Deploy to Cloudflare Pages via CLI
+
+### Detailed Guide
+
+See [CLOUDFLARE_DEPLOYMENT.md](./CLOUDFLARE_DEPLOYMENT.md) for complete deployment instructions including:
+- Step-by-step setup guide
+- Environment variables configuration
+- Custom domain setup
+- Troubleshooting tips
+- Performance optimization
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
