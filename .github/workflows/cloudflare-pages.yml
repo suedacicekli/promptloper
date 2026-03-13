@@ -30,6 +30,9 @@ jobs:
         run: npm ci
 
       - name: Build with Cloudflare adapter
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: "https://kifcwakslcgdqjnlqatl.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "sb_publishable_j_ia1-CqDUfyr1hx9Cj3vA_8kanIGC4"
         run: npm run pages:build
 
       - name: Create Cloudflare Pages project (if not exists)
