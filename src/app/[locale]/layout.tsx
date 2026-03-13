@@ -35,12 +35,6 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} data-theme="black">
-      <head>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
       <body className="bg-black min-h-screen">
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>
