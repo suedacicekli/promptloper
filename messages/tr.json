@@ -1,0 +1,105 @@
+{
+  "navbar": {
+    "logoText": "Promptloper",
+    "explore": "Kesfet",
+    "trending": "Trend",
+    "community": "Topluluk",
+    "login": "Giris Yap",
+    "addPrompt": "Prompt Ekle"
+  },
+  "search": {
+    "placeholder": "Prompt içeriği, başlık ile ara"
+  },
+  "category": {
+    "all": "Tümü",
+    "filter": "Kategori Filtrele"
+  },
+  "prompt": {
+    "copy": "Kopyala",
+    "copied": "Kopyalandı!",
+    "viewDetails": "Detayları Gör",
+    "close": "Kapat",
+    "aiTool": "AI Aracı"
+  },
+  "trending": {
+    "title": "🔥 Trend Promptlar",
+    "subtitle": "En popüler ve çok kullanılan promptlar"
+  },
+  "contribution": {
+    "title": "Katkıda Bulun",
+    "subtitle": "Yeni prompt ekleyin veya geri bildirim gönderin",
+    "name": "İsim",
+    "namePlaceholder": "Adınız",
+    "email": "E-posta",
+    "emailPlaceholder": "ornek@email.com",
+    "subject": "Konu",
+    "subjectPlaceholder": "Mesaj konusu",
+    "message": "Mesaj",
+    "messagePlaceholder": "Mesajınızı buraya yazın...",
+    "send": "Gönder",
+    "sending": "Gönderiliyor...",
+    "success": "Mesajınız başarıyla gönderildi!",
+    "error": "Bir hata oluştu. Lütfen tekrar deneyin.",
+    "githubContribute": "GitHub üzerinden katkıda bulun",
+    "or": "veya",
+    "close": "Kapat"
+  },
+  "footer": {
+    "description": "AI promptlarını keşfedin, paylaşın ve geliştirin. Topluluk tarafından oluşturulan en iyi promptları bulun.",
+    "quickLinks": "Hızlı Bağlantılar",
+    "home": "Ana Sayfa",
+    "contribute": "Katkıda Bulun",
+    "about": "Hakkında",
+    "github": "GitHub",
+    "follow": "Takip Et",
+    "community": "Topluluk",
+    "support": "Destek",
+    "contact": "İletişim",
+    "copyright": "© 2024 Promptloper. Tüm hakları saklıdır.",
+    "madeWith": "❤️ ile yapıldı"
+  },
+  "support": {
+    "title": "Promptloper'ı Destekle",
+    "message": "Eğer Promptloper'ı beğendiyseniz ve projeyi desteklemek isterseniz, bize bir kahve ısmarlayabilirsiniz!",
+    "description": "Desteğiniz, bu projeyi geliştirmemize ve topluluk için daha fazla özellik eklememize yardımcı olur.",
+    "buyMeCoffee": "☕ Bana Bir Kahve Ismarla",
+    "dontShowAgain": "Bir daha gösterme",
+    "close": "Kapat"
+  },
+  "auth": {
+    "loginTitle": "Tekrar hosgeldin",
+    "loginSubtitle": "Hesabina giris yap",
+    "registerTitle": "Hesap olustur",
+    "registerSubtitle": "Ucretsiz hesabini olustur",
+    "continueWithGoogle": "Google ile devam et",
+    "continueWithGithub": "GitHub ile devam et",
+    "or": "veya",
+    "namePlaceholder": "Adin",
+    "emailPlaceholder": "E-posta adresin",
+    "passwordPlaceholder": "Sifre (min. 6 karakter)",
+    "loginButton": "Giris Yap",
+    "registerButton": "Kayit Ol",
+    "loading": "Yukleniyor...",
+    "noAccount": "Hesabin yok mu?",
+    "hasAccount": "Zaten hesabin var mi?",
+    "registerLink": "Kayit ol",
+    "loginLink": "Giris yap",
+    "checkEmail": "E-postani kontrol et! Dogrulama linki gonderdik.",
+    "close": "Kapat",
+    "signOut": "Cikis Yap",
+    "backToHome": "Ana sayfaya don"
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Hata",
+    "success": "Başarılı",
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "search": "Ara",
+    "filter": "Filtrele",
+    "sort": "Sırala",
+    "clear": "Temizle"
+  }
+}

@@ -8,7 +8,7 @@ import SearchInput from '@/components/SearchInput'
 import PromptGrid from '@/components/PromptGrid'
 import Footer from '@/components/Footer'
 import { PromptData } from '@/types'
-import allPromptsData from '../../public/data/all-prompts.json'
+import allPromptsData from '../../../public/data/all-prompts.json'
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('All')

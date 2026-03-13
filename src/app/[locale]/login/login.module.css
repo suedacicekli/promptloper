@@ -1,0 +1,48 @@
+.page {
+  display: flex;
+  min-height: 100vh;
+  background-color: #000000;
+}
+
+.left {
+  flex: 1;
+  display: none;
+}
+
+.right {
+  width: 100%;
+}
+
+.loadingScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #000000;
+}
+
+.loadingDot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: rgba(198, 244, 73, 0.3);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* Desktop: split layout */
+@media (min-width: 1024px) {
+  .left {
+    display: block;
+    flex: 1.1;
+  }
+
+  .right {
+    width: auto;
+    flex: 0.9;
+  }
+}

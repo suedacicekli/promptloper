@@ -25,6 +25,14 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# kisisel notlar (lokalde kalir)
+NOTES.md
+TODO.md
+
+# claude & playwright cache
+.claude/
+.playwright-mcp/
+
 # vercel
 .vercel
 
