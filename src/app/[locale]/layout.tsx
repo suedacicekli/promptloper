@@ -1,18 +1,10 @@
 import type { Metadata } from 'next'
-import { Silkscreen } from 'next/font/google'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import FloatingActionButton from '@/components/FloatingActionButton'
 import AuthProvider from '@/components/providers/AuthProvider'
 import { routing } from '@/i18n/routing'
-
-const silkscreen = Silkscreen({
-  weight: ['400', '700'],
-  subsets: ['latin'],
-  variable: '--font-pixel',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   title: 'Promptloper - AI Prompt Sharing Platform',
@@ -42,7 +34,13 @@ export default async function LocaleLayout({
   const messages = await getMessages()
 
   return (
-    <html lang={locale} data-theme="black" className={silkscreen.variable}>
+    <html lang={locale} data-theme="black">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="bg-black min-h-screen">
         <NextIntlClientProvider messages={messages}>
           <AuthProvider>

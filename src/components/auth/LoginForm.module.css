@@ -26,7 +26,7 @@
 }
 
 .mobileLogoText {
-  font-family: var(--font-pixel), monospace;
+  font-family: 'Silkscreen', monospace;
   font-size: 0.875rem;
   font-weight: 400;
   color: #ffffff;
