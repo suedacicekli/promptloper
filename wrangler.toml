@@ -5,3 +5,8 @@ pages_build_output_dir = ".vercel/output/static"
 
 # Node.js compatibility for Next.js features
 compatibility_flags = ["nodejs_compat"]
+
+# Environment variables (NEXT_PUBLIC_ = client-side erisilebilir)
+[vars]
+NEXT_PUBLIC_SUPABASE_URL = "https://kifcwakslcgdqjnlqatl.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY = "sb_publishable_j_ia1-CqDUfyr1hx9Cj3vA_8kanIGC4"
