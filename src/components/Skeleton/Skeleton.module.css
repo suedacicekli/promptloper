@@ -1,0 +1,211 @@
+/* Base skeleton shimmer */
+.skeleton {
+  background: rgba(255, 255, 255, 0.06);
+  animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.4; }
+}
+
+/* === PROMPT CARD SKELETON === */
+.cardSkeleton {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  height: 300px;
+}
+
+.cardImage {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  background-size: 200% 200%;
+  animation: gradientShimmer 2s ease-in-out infinite;
+}
+
+.cardFavBtn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes gradientShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* === PROMPT GRID SKELETON === */
+.gridSkeleton {
+  width: 100%;
+  padding: 0 24px 48px;
+  columns: 2;
+  column-gap: 16px;
+}
+
+.gridItem {
+  break-inside: avoid;
+  margin-bottom: 16px;
+}
+
+@media (min-width: 768px) {
+  .gridSkeleton {
+    padding: 0 48px 48px;
+    columns: 2;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gridSkeleton {
+    padding: 0 96px 48px;
+    columns: 3;
+  }
+}
+
+@media (min-width: 1280px) {
+  .gridSkeleton {
+    columns: 4;
+  }
+}
+
+/* === TRENDING SKELETON === */
+.trendingSkeleton {
+  width: 100%;
+  padding: 32px 0;
+}
+
+.trendingTitle {
+  width: 200px;
+  height: 28px;
+  margin: 0 24px 24px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.trendingCards {
+  display: flex;
+  gap: 24px;
+  padding: 0 24px;
+  overflow: hidden;
+}
+
+.trendingCard {
+  flex-shrink: 0;
+  width: 420px;
+  height: 280px;
+  border-radius: 16px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  background-size: 200% 200%;
+  animation: gradientShimmer 2s ease-in-out infinite;
+}
+
+@media (min-width: 768px) {
+  .trendingTitle {
+    margin-left: 48px;
+  }
+  .trendingCards {
+    padding: 0 48px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .trendingTitle {
+    margin-left: 96px;
+  }
+  .trendingCards {
+    padding: 0 96px;
+  }
+}
+
+/* === PROFILE SKELETON === */
+.profileSkeleton {
+  padding: 2rem 0;
+}
+
+.profileCardSkeleton {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  margin-bottom: 2rem;
+}
+
+.profileAvatarSkeleton {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  animation: shimmer 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.profileInfoSkeleton {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.profileNameSkeleton {
+  width: 160px;
+  height: 22px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+.profileEmailSkeleton {
+  width: 200px;
+  height: 14px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  animation: shimmer 1.8s ease-in-out infinite;
+  animation-delay: 0.1s;
+}
+
+.profileBioSkeleton {
+  width: 280px;
+  height: 14px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  animation: shimmer 1.8s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+
+.tabsSkeleton {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.75rem;
+}
+
+.tabSkeleton {
+  width: 100px;
+  height: 18px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  animation: shimmer 1.8s ease-in-out infinite;
+}

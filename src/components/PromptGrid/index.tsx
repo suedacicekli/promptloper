@@ -2,13 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 import { PromptData } from '@/types'
 import AIToolIcon, { getAIToolName } from '@/components/AIToolIcon'
 import SupportModal from '@/components/SupportModal'
+import AuthModal from '@/components/auth/AuthModal'
+import { useAuth } from '@/components/providers/AuthProvider'
+import { createClient } from '@/lib/supabase/client'
 import styles from './PromptGrid.module.css'
 
 interface PromptGridProps {
   prompts: PromptData[]
+  noPadding?: boolean
 }
 
 interface PromptCardProps {
@@ -16,11 +21,14 @@ interface PromptCardProps {
   useFixedHeight?: boolean
   cardHeight: number
   onCopy: () => void
+  isFavorited: boolean
+  onFavoriteClick: (promptId: string) => void
 }
 
-function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy }: PromptCardProps) {
+function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy, isFavorited, onFavoriteClick }: PromptCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [copied, setCopied] = useState(false)
+  const t = useTranslations('prompt')
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -32,6 +40,11 @@ function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy }: 
     } catch (err) {
       console.error('Failed to copy:', err)
     }
+  }
+
+  const handleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    onFavoriteClick(promptData.id)
   }
 
   return (
@@ -53,6 +66,26 @@ function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy }: 
       </div>
 
       <div className={`${styles.overlay} ${isHovered ? styles.overlayHover : ''}`} />
+
+      {/* Favorite button — always visible */}
+      <button
+        className={`${styles.favoriteBtn} ${isFavorited ? styles.favoriteBtnActive : ''}`}
+        onClick={handleFavorite}
+        aria-label={isFavorited ? t('favorited') : t('favorite')}
+      >
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill={isFavorited ? 'currentColor' : 'none'}
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+        </svg>
+      </button>
 
       {isHovered && (
         <>
@@ -109,10 +142,13 @@ function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy }: 
   )
 }
 
-export default function PromptGrid({ prompts }: PromptGridProps) {
+export default function PromptGrid({ prompts, noPadding = false }: PromptGridProps) {
   const useFixedLayout = prompts.length < 8
   const [showSupportModal, setShowSupportModal] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
   const [copyCount, setCopyCount] = useState(0)
+  const [favoritedIds, setFavoritedIds] = useState<Set<string>>(new Set())
+  const { user } = useAuth()
 
   useEffect(() => {
     const lastShown = localStorage.getItem('supportModalLastShown')
@@ -127,6 +163,28 @@ export default function PromptGrid({ prompts }: PromptGridProps) {
       setCopyCount(parseInt(savedCount, 10))
     }
   }, [])
+
+  // Kullanıcı giriş yaptıysa favorilerini yükle
+  useEffect(() => {
+    if (!user) {
+      setFavoritedIds(new Set())
+      return
+    }
+
+    async function loadFavorites() {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('favorites')
+        .select('prompt_id')
+        .eq('user_id', user!.id)
+
+      if (data) {
+        setFavoritedIds(new Set(data.map(f => f.prompt_id)))
+      }
+    }
+
+    loadFavorites()
+  }, [user])
 
   const handleCopy = () => {
     const newCount = copyCount + 1
@@ -146,9 +204,51 @@ export default function PromptGrid({ prompts }: PromptGridProps) {
     }
   }
 
+  const handleFavoriteClick = async (promptId: string) => {
+    console.log('Favorite clicked:', promptId, 'user:', user?.id)
+    if (!user) {
+      console.log('No user, showing auth modal')
+      setShowAuthModal(true)
+      return
+    }
+
+    const supabase = createClient()
+    const isFav = favoritedIds.has(promptId)
+
+    if (isFav) {
+      // Favoriden çıkar
+      const { error } = await supabase
+        .from('favorites')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('prompt_id', promptId)
+
+      if (!error) {
+        setFavoritedIds(prev => {
+          const next = new Set(prev)
+          next.delete(promptId)
+          return next
+        })
+      } else {
+        console.error('Favori silinirken hata:', error.message)
+      }
+    } else {
+      // Favoriye ekle
+      const { error } = await supabase
+        .from('favorites')
+        .insert({ user_id: user.id, prompt_id: promptId })
+
+      if (!error) {
+        setFavoritedIds(prev => new Set(prev).add(promptId))
+      } else {
+        console.error('Favori eklenirken hata:', error.message)
+      }
+    }
+  }
+
   return (
     <>
-      <div className={styles.container}>
+      <div className={styles.container} style={noPadding ? { padding: 0 } : undefined}>
         <div className={`${styles.grid} ${useFixedLayout ? styles.gridFixed : ''}`}>
           {prompts.map((prompt) => (
             <div key={prompt.id} className={styles.gridItem}>
@@ -157,6 +257,8 @@ export default function PromptGrid({ prompts }: PromptGridProps) {
                 useFixedHeight={useFixedLayout}
                 cardHeight={prompt.height || 300}
                 onCopy={handleCopy}
+                isFavorited={favoritedIds.has(prompt.id)}
+                onFavoriteClick={handleFavoriteClick}
               />
             </div>
           ))}
@@ -166,6 +268,11 @@ export default function PromptGrid({ prompts }: PromptGridProps) {
       <SupportModal
         isOpen={showSupportModal}
         onClose={() => setShowSupportModal(false)}
+      />
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
       />
     </>
   )

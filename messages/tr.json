@@ -5,7 +5,8 @@
     "trending": "Trend",
     "community": "Topluluk",
     "login": "Giris Yap",
-    "addPrompt": "Prompt Ekle"
+    "addPrompt": "Prompt Ekle",
+    "profile": "Profilim"
   },
   "search": {
     "placeholder": "Prompt içeriği, başlık ile ara"
@@ -19,7 +20,39 @@
     "copied": "Kopyalandı!",
     "viewDetails": "Detayları Gör",
     "close": "Kapat",
-    "aiTool": "AI Aracı"
+    "aiTool": "AI Aracı",
+    "favorite": "Favorile",
+    "favorited": "Favorilendi",
+    "loginToFavorite": "Favorilemek için giriş yap"
+  },
+  "promptNew": {
+    "title": "Yeni Prompt Ekle",
+    "promptTitle": "Başlık",
+    "promptTitlePlaceholder": "Promptuna açıklayıcı bir başlık ver",
+    "description": "Açıklama",
+    "descriptionPlaceholder": "Bu promptun ne yaptığını kısaca açıkla",
+    "promptText": "Prompt",
+    "promptTextPlaceholder": "Promptunu buraya yaz...",
+    "category": "Kategori",
+    "selectCategory": "Kategori seç",
+    "aiTool": "AI Aracı (opsiyonel)",
+    "selectAiTool": "AI aracı seç",
+    "tags": "Etiketler (opsiyonel)",
+    "tagsPlaceholder": "ör. kod, verimlilik, yazı",
+    "tagsHint": "Etiketleri virgülle ayır",
+    "isPublic": "Bu promptu herkese açık yap",
+    "submit": "Promptu Yayınla",
+    "submitting": "Yayınlanıyor...",
+    "success": "Prompt yayınlandı!",
+    "image": "Görsel",
+    "imageUrl": "URL ile",
+    "imageUpload": "Dosya Yükle",
+    "imageUrlPlaceholder": "Görsel URL'si yapıştır (ör. https://...)",
+    "imageUploadHint": "Tıkla veya sürükle bırak (max 5MB)",
+    "imageUploadError": "Görsel yüklenirken hata oluştu.",
+    "error": "Bir hata oluştu. Tekrar dene.",
+    "loginRequired": "Prompt eklemek için giriş yapman gerekiyor.",
+    "backToHome": "Ana sayfaya dön"
   },
   "trending": {
     "title": "🔥 Trend Promptlar",
@@ -88,6 +121,41 @@
     "close": "Kapat",
     "signOut": "Cikis Yap",
     "backToHome": "Ana sayfaya don"
+  },
+  "profile": {
+    "title": "Profilim",
+    "editProfile": "Profili Düzenle",
+    "myPrompts": "Promptlarım",
+    "myFavorites": "Favorilerim",
+    "aiHistory": "AI Geçmişim",
+    "joinedAt": "Üye oldu",
+    "noBio": "Bio eklenmemiş",
+    "noPrompts": "Henüz prompt paylaşmadın",
+    "noPromptsDesc": "İlk promptunu ekleyerek topluluğa katkıda bulun!",
+    "addFirstPrompt": "İlk Promptumu Ekle",
+    "noFavorites": "Henüz favori yok",
+    "noFavoritesDesc": "Beğendiğin promptları favorile, burada sakla.",
+    "exploreFavorites": "Promptları Keşfet",
+    "noAiHistory": "Henüz AI üretimi yok",
+    "noAiHistoryDesc": "Bir prompt seç ve AI ile içerik üret.",
+    "backToHome": "Ana sayfaya dön",
+    "anonymous": "Anonim",
+    "edit": {
+      "title": "Profili Düzenle",
+      "name": "İsim",
+      "namePlaceholder": "Adın",
+      "bio": "Hakkımda",
+      "bioPlaceholder": "Kendinden biraz bahset...",
+      "save": "Kaydet",
+      "saving": "Kaydediliyor...",
+      "saved": "Profil güncellendi!",
+      "error": "Bir hata oluştu. Tekrar dene.",
+      "cancel": "İptal"
+    },
+    "publicProfile": {
+      "notFound": "Kullanıcı bulunamadı",
+      "prompts": "Paylaşılan Promptlar"
+    }
   },
   "common": {
     "loading": "Yükleniyor...",

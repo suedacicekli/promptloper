@@ -10,9 +10,11 @@ interface PromptModalProps {
   isOpen: boolean
   onClose: () => void
   promptData: PromptData
+  isFavorited?: boolean
+  onFavoriteClick?: (promptId: string) => void
 }
 
-export default function PromptModal({ isOpen, onClose, promptData }: PromptModalProps) {
+export default function PromptModal({ isOpen, onClose, promptData, isFavorited = false, onFavoriteClick }: PromptModalProps) {
   const [copied, setCopied] = useState(false)
 
   useEffect(() => {
@@ -80,24 +82,47 @@ export default function PromptModal({ isOpen, onClose, promptData }: PromptModal
                   <AIToolIcon tool={promptData.aiTool} size={20} />
                 )}
               </div>
-              <button onClick={handleCopy} className={styles.copyButton}>
-                {copied ? (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="#16a34a">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+              <div className={styles.actions}>
+                {onFavoriteClick && (
+                  <button
+                    onClick={() => onFavoriteClick(promptData.id)}
+                    className={`${styles.favoriteButton} ${isFavorited ? styles.favoriteButtonActive : ''}`}
+                    aria-label={isFavorited ? 'Remove from favorites' : 'Add to favorites'}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill={isFavorited ? 'currentColor' : 'none'}
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                     </svg>
-                    <span>Copied!</span>
-                  </>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
-                      <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
-                    </svg>
-                    <span>Copy</span>
-                  </>
+                    {isFavorited ? 'Favorited' : 'Favorite'}
+                  </button>
                 )}
-              </button>
+                <button onClick={handleCopy} className={styles.copyButton}>
+                  {copied ? (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="#16a34a">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      <span>Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" />
+                        <path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h8a2 2 0 00-2-2H5z" />
+                      </svg>
+                      <span>Copy</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             <div className={styles.promptBox}>

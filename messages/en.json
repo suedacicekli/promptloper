@@ -5,7 +5,8 @@
     "trending": "Trending",
     "community": "Community",
     "login": "Sign In",
-    "addPrompt": "Add Prompt"
+    "addPrompt": "Add Prompt",
+    "profile": "Profile"
   },
   "search": {
     "placeholder": "Search by content, title"
@@ -19,7 +20,39 @@
     "copied": "Copied!",
     "viewDetails": "View Details",
     "close": "Close",
-    "aiTool": "AI Tool"
+    "aiTool": "AI Tool",
+    "favorite": "Favorite",
+    "favorited": "Favorited",
+    "loginToFavorite": "Sign in to favorite"
+  },
+  "promptNew": {
+    "title": "Add New Prompt",
+    "promptTitle": "Title",
+    "promptTitlePlaceholder": "Give your prompt a clear title",
+    "description": "Description",
+    "descriptionPlaceholder": "Briefly describe what this prompt does",
+    "promptText": "Prompt",
+    "promptTextPlaceholder": "Write your prompt here...",
+    "category": "Category",
+    "selectCategory": "Select a category",
+    "aiTool": "AI Tool (optional)",
+    "selectAiTool": "Select an AI tool",
+    "tags": "Tags (optional)",
+    "tagsPlaceholder": "e.g. coding, productivity, writing",
+    "tagsHint": "Separate tags with commas",
+    "isPublic": "Make this prompt public",
+    "submit": "Publish Prompt",
+    "submitting": "Publishing...",
+    "success": "Prompt published!",
+    "image": "Image",
+    "imageUrl": "Paste URL",
+    "imageUpload": "Upload File",
+    "imageUrlPlaceholder": "Paste image URL (e.g. https://...)",
+    "imageUploadHint": "Click or drag & drop (max 5MB)",
+    "imageUploadError": "Failed to upload image.",
+    "error": "Something went wrong. Please try again.",
+    "loginRequired": "You must be signed in to add prompts.",
+    "backToHome": "Back to home"
   },
   "trending": {
     "title": "🔥 Trending Prompts",
@@ -88,6 +121,41 @@
     "close": "Close",
     "signOut": "Sign Out",
     "backToHome": "Back to home"
+  },
+  "profile": {
+    "title": "My Profile",
+    "editProfile": "Edit Profile",
+    "myPrompts": "My Prompts",
+    "myFavorites": "My Favorites",
+    "aiHistory": "AI History",
+    "joinedAt": "Joined",
+    "noBio": "No bio added",
+    "noPrompts": "No prompts shared yet",
+    "noPromptsDesc": "Contribute to the community by adding your first prompt!",
+    "addFirstPrompt": "Add My First Prompt",
+    "noFavorites": "No favorites yet",
+    "noFavoritesDesc": "Favorite prompts you like and save them here.",
+    "exploreFavorites": "Explore Prompts",
+    "noAiHistory": "No AI generations yet",
+    "noAiHistoryDesc": "Select a prompt and generate content with AI.",
+    "backToHome": "Back to home",
+    "anonymous": "Anonymous",
+    "edit": {
+      "title": "Edit Profile",
+      "name": "Name",
+      "namePlaceholder": "Your name",
+      "bio": "About Me",
+      "bioPlaceholder": "Tell us a bit about yourself...",
+      "save": "Save",
+      "saving": "Saving...",
+      "saved": "Profile updated!",
+      "error": "An error occurred. Please try again.",
+      "cancel": "Cancel"
+    },
+    "publicProfile": {
+      "notFound": "User not found",
+      "prompts": "Shared Prompts"
+    }
   },
   "common": {
     "loading": "Loading...",

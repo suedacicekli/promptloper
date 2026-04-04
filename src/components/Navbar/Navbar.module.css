@@ -315,16 +315,34 @@
   height: 16px;
 }
 
-/* Loading indicator */
-.loadingDot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.1);
-  animation: pulse 1.5s infinite;
+/* Loading placeholder — profil butonu boyutunda skeleton */
+.profilePlaceholder {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.3125rem 0.75rem 0.3125rem 0.3125rem;
 }
 
-@keyframes pulse {
+.avatarPlaceholder {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  animation: shimmer 1.5s infinite;
+}
+
+.namePlaceholder {
+  width: 72px;
+  height: 14px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  animation: shimmer 1.5s infinite;
+  animation-delay: 0.15s;
+}
+
+@keyframes shimmer {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.8; }
 }
@@ -405,6 +423,7 @@
 }
 
 .profileDropdownItem {
+  display: block;
   width: 100%;
   text-align: left;
   padding: 0.625rem 1rem;
@@ -414,6 +433,8 @@
   font-size: 0.8125rem;
   cursor: pointer;
   transition: all 0.15s ease;
+  text-decoration: none;
+  box-sizing: border-box;
 }
 
 .profileDropdownItem:hover {

@@ -2,7 +2,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import type { Database } from '@/types/database'
 
 // Browser (client-side) icin Supabase client
-// React componentlerinde kullanilir: const supabase = createClient()
+// createBrowserClient dahili olarak singleton yonetir
 export function createClient() {
   return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

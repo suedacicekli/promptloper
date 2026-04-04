@@ -110,6 +110,39 @@
   letter-spacing: 0.5px;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.favoriteButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.favoriteButton:hover {
+  color: #ff6b8a;
+  border-color: rgba(255, 107, 138, 0.4);
+  background-color: rgba(255, 107, 138, 0.08);
+}
+
+.favoriteButtonActive {
+  color: #ff6b8a;
+  border-color: rgba(255, 107, 138, 0.4);
+  background-color: rgba(255, 107, 138, 0.1);
+}
+
 .copyButton {
   display: flex;
   align-items: center;

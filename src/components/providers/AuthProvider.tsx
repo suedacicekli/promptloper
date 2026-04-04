@@ -46,12 +46,17 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     // 1. Sayfa yuklendiginde mevcut oturumu kontrol et
     async function getInitialSession() {
-      const { data: { user } } = await supabase.auth.getUser()
-      setUser(user)
-      if (user) {
-        await fetchProfile(user.id)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        setUser(user)
+        if (user) {
+          await fetchProfile(user.id)
+        }
+      } catch {
+        // Sessizce devam et
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     getInitialSession()
@@ -60,15 +65,20 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     // Bu listener login, logout, token refresh gibi olaylari dinler
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        const currentUser = session?.user ?? null
-        setUser(currentUser)
+        try {
+          const currentUser = session?.user ?? null
+          setUser(currentUser)
 
-        if (currentUser) {
-          await fetchProfile(currentUser.id)
-        } else {
-          setProfile(null)
+          if (currentUser) {
+            await fetchProfile(currentUser.id)
+          } else {
+            setProfile(null)
+          }
+        } catch {
+          // Sessizce devam et
+        } finally {
+          setLoading(false)
         }
-        setLoading(false)
       }
     )
 

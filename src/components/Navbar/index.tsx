@@ -73,8 +73,11 @@ export default function Navbar() {
             <div className={styles.divider} />
 
             {loading ? (
-              // Yukleniyor durumu
-              <div className={styles.loadingDot} />
+              // Yukleniyor — kullanici butonu boyutunda placeholder
+              <div className={styles.profilePlaceholder}>
+                <div className={styles.avatarPlaceholder} />
+                <div className={styles.namePlaceholder} />
+              </div>
             ) : user ? (
               // Giris yapmis kullanici
               <div className={styles.profileContainer}>
@@ -102,6 +105,13 @@ export default function Navbar() {
                     <div className={styles.profileDropdownHeader}>
                       <span className={styles.profileDropdownEmail}>{user.email}</span>
                     </div>
+                    <Link
+                      href={`/${locale}/profile`}
+                      className={styles.profileDropdownItem}
+                      onClick={() => setIsProfileMenuOpen(false)}
+                    >
+                      {t('profile')}
+                    </Link>
                     <button
                       className={styles.profileDropdownItem}
                       onClick={async () => {
@@ -169,15 +179,24 @@ export default function Navbar() {
             <div className={styles.mobileActions}>
               <div className={styles.mobileActionsRow}>
                 {user ? (
-                  <button
-                    className={styles.mobileLoginBtn}
-                    onClick={async () => {
-                      await signOut()
-                      setIsMenuOpen(false)
-                    }}
-                  >
-                    {tAuth('signOut')}
-                  </button>
+                  <>
+                    <Link
+                      href={`/${locale}/profile`}
+                      className={styles.mobileLoginBtn}
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {t('profile')}
+                    </Link>
+                    <button
+                      className={styles.mobileLoginBtn}
+                      onClick={async () => {
+                        await signOut()
+                        setIsMenuOpen(false)
+                      }}
+                    >
+                      {tAuth('signOut')}
+                    </button>
+                  </>
                 ) : (
                   <Link
                     href={`/${locale}/login`}

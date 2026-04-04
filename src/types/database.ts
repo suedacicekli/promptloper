@@ -34,6 +34,7 @@ export type Database = {
           bio?: string | null
           updated_at?: string
         }
+        Relationships: []
       }
       prompts: {
         Row: {
@@ -81,24 +82,26 @@ export type Database = {
           copy_count?: number
           updated_at?: string
         }
+        Relationships: []
       }
       favorites: {
         Row: {
           id: string
           user_id: string
-          prompt_id: string
+          prompt_id: string // TEXT - JSON prompt ID'leri destekler (ör: "prompt-1")
           created_at: string
         }
         Insert: {
           id?: string
           user_id: string
-          prompt_id: string
+          prompt_id: string // TEXT - UUID veya string ID kabul eder
           created_at?: string
         }
         Update: {
           user_id?: string
           prompt_id?: string
         }
+        Relationships: []
       }
       prompt_likes: {
         Row: {
@@ -117,6 +120,7 @@ export type Database = {
           user_id?: string
           prompt_id?: string
         }
+        Relationships: []
       }
       ai_generations: {
         Row: {
@@ -145,6 +149,7 @@ export type Database = {
           output_tokens?: number
           result?: string
         }
+        Relationships: []
       }
     }
     Views: {
