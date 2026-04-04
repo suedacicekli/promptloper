@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
@@ -49,45 +49,65 @@ export default function ProfilePage() {
     }
   }, [user, loading, router, locale])
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!user) return
+    setDataLoading(true)
+    const supabase = createClient()
+    const [promptsRes, historyRes, favoritesRes] = await Promise.all([
+      supabase
+        .from('prompts')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('ai_generations')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20),
+      supabase
+        .from('favorites')
+        .select('prompt_id')
+        .eq('user_id', user.id),
+    ])
+    setMyPrompts(promptsRes.data || [])
+    setAiHistory(historyRes.data || [])
 
-    async function fetchData() {
-      setDataLoading(true)
-      const supabase = createClient()
-      const [promptsRes, historyRes, favoritesRes] = await Promise.all([
-        supabase
+    if (favoritesRes.data && favoritesRes.data.length > 0) {
+      const favIds = new Set(favoritesRes.data.map(f => f.prompt_id))
+
+      const staticPrompts = [
+        ...(allPromptsData as PromptData[]),
+        ...(trendingPromptsData as PromptData[]),
+      ]
+      const staticFavs = staticPrompts.filter(p => favIds.has(p.id))
+
+      const dbFavIds = favoritesRes.data
+        .map(f => f.prompt_id)
+        .filter(id => !staticPrompts.some(sp => sp.id === id))
+
+      let dbFavs: PromptData[] = []
+      if (dbFavIds.length > 0) {
+        const { data: dbFavPrompts } = await supabase
           .from('prompts')
           .select('*')
-          .eq('user_id', user!.id)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('ai_generations')
-          .select('*')
-          .eq('user_id', user!.id)
-          .order('created_at', { ascending: false })
-          .limit(20),
-        supabase
-          .from('favorites')
-          .select('prompt_id')
-          .eq('user_id', user!.id),
-      ])
-      setMyPrompts(promptsRes.data || [])
-      setAiHistory(historyRes.data || [])
+          .in('id', dbFavIds)
 
-      if (favoritesRes.data) {
-        const favIds = new Set(favoritesRes.data.map(f => f.prompt_id))
-        const allPrompts = [
-          ...(allPromptsData as PromptData[]),
-          ...(trendingPromptsData as PromptData[]),
-        ]
-        setMyFavorites(allPrompts.filter(p => favIds.has(p.id)))
+        if (dbFavPrompts) {
+          dbFavs = dbFavPrompts.map(dbPromptToPromptData)
+        }
       }
-      setDataLoading(false)
-    }
 
-    fetchData()
+      setMyFavorites([...dbFavs, ...staticFavs])
+    } else {
+      setMyFavorites([])
+    }
+    setDataLoading(false)
   }, [user])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   if (loading || !user) {
     return (
@@ -207,7 +227,12 @@ export default function ProfilePage() {
                 </Link>
               </div>
             ) : (
-              <PromptGrid prompts={myPrompts.map(dbPromptToPromptData)} noPadding />
+              <PromptGrid
+                prompts={myPrompts.map(dbPromptToPromptData)}
+                noPadding
+                promptDbMap={new Map(myPrompts.map(p => [p.id, { dbId: p.id, ownerId: p.user_id }]))}
+                onPromptDeleted={fetchData}
+              />
             )}
           </>
         )}

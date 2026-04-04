@@ -7,6 +7,7 @@ import { PromptData } from '@/types'
 import AIToolIcon, { getAIToolName } from '@/components/AIToolIcon'
 import SupportModal from '@/components/SupportModal'
 import AuthModal from '@/components/auth/AuthModal'
+import PromptModal from '@/components/PromptModal'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { createClient } from '@/lib/supabase/client'
 import styles from './PromptGrid.module.css'
@@ -14,6 +15,11 @@ import styles from './PromptGrid.module.css'
 interface PromptGridProps {
   prompts: PromptData[]
   noPadding?: boolean
+  loading?: boolean
+  /** Her prompt icin DB bilgisi (modal'da edit/delete icin) */
+  promptDbMap?: Map<string, { dbId: string; ownerId: string | null }>
+  /** Prompt silindikten sonra listeyi yenile */
+  onPromptDeleted?: () => void
 }
 
 interface PromptCardProps {
@@ -23,9 +29,10 @@ interface PromptCardProps {
   onCopy: () => void
   isFavorited: boolean
   onFavoriteClick: (promptId: string) => void
+  onCardClick: () => void
 }
 
-function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy, isFavorited, onFavoriteClick }: PromptCardProps) {
+function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy, isFavorited, onFavoriteClick, onCardClick }: PromptCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [copied, setCopied] = useState(false)
   const t = useTranslations('prompt')
@@ -50,9 +57,10 @@ function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy, is
   return (
     <div
       className={styles.card}
-      style={{ height: useFixedHeight ? '350px' : `${cardHeight}px` }}
+      style={{ height: useFixedHeight ? '350px' : `${cardHeight}px`, cursor: 'pointer' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={onCardClick}
     >
       <div className={styles.imageWrapper}>
         <Image
@@ -142,12 +150,13 @@ function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy, is
   )
 }
 
-export default function PromptGrid({ prompts, noPadding = false }: PromptGridProps) {
+export default function PromptGrid({ prompts, noPadding = false, loading = false, promptDbMap, onPromptDeleted }: PromptGridProps) {
   const useFixedLayout = prompts.length < 8
   const [showSupportModal, setShowSupportModal] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [copyCount, setCopyCount] = useState(0)
   const [favoritedIds, setFavoritedIds] = useState<Set<string>>(new Set())
+  const [selectedPrompt, setSelectedPrompt] = useState<PromptData | null>(null)
   const { user } = useAuth()
 
   useEffect(() => {
@@ -164,7 +173,6 @@ export default function PromptGrid({ prompts, noPadding = false }: PromptGridPro
     }
   }, [])
 
-  // Kullanıcı giriş yaptıysa favorilerini yükle
   useEffect(() => {
     if (!user) {
       setFavoritedIds(new Set())
@@ -205,9 +213,7 @@ export default function PromptGrid({ prompts, noPadding = false }: PromptGridPro
   }
 
   const handleFavoriteClick = async (promptId: string) => {
-    console.log('Favorite clicked:', promptId, 'user:', user?.id)
     if (!user) {
-      console.log('No user, showing auth modal')
       setShowAuthModal(true)
       return
     }
@@ -216,7 +222,6 @@ export default function PromptGrid({ prompts, noPadding = false }: PromptGridPro
     const isFav = favoritedIds.has(promptId)
 
     if (isFav) {
-      // Favoriden çıkar
       const { error } = await supabase
         .from('favorites')
         .delete()
@@ -229,21 +234,21 @@ export default function PromptGrid({ prompts, noPadding = false }: PromptGridPro
           next.delete(promptId)
           return next
         })
-      } else {
-        console.error('Favori silinirken hata:', error.message)
       }
     } else {
-      // Favoriye ekle
       const { error } = await supabase
         .from('favorites')
         .insert({ user_id: user.id, prompt_id: promptId })
 
       if (!error) {
         setFavoritedIds(prev => new Set(prev).add(promptId))
-      } else {
-        console.error('Favori eklenirken hata:', error.message)
       }
     }
+  }
+
+  const getDbInfo = (promptId: string) => {
+    if (promptDbMap) return promptDbMap.get(promptId)
+    return undefined
   }
 
   return (
@@ -259,11 +264,29 @@ export default function PromptGrid({ prompts, noPadding = false }: PromptGridPro
                 onCopy={handleCopy}
                 isFavorited={favoritedIds.has(prompt.id)}
                 onFavoriteClick={handleFavoriteClick}
+                onCardClick={() => setSelectedPrompt(prompt)}
               />
             </div>
           ))}
         </div>
       </div>
+
+      {/* Prompt Detail Modal */}
+      {selectedPrompt && (
+        <PromptModal
+          isOpen={true}
+          onClose={() => setSelectedPrompt(null)}
+          promptData={selectedPrompt}
+          isFavorited={favoritedIds.has(selectedPrompt.id)}
+          onFavoriteClick={handleFavoriteClick}
+          dbPromptId={getDbInfo(selectedPrompt.id)?.dbId}
+          ownerId={getDbInfo(selectedPrompt.id)?.ownerId}
+          onDelete={() => {
+            setSelectedPrompt(null)
+            if (onPromptDeleted) onPromptDeleted()
+          }}
+        />
+      )}
 
       <SupportModal
         isOpen={showSupportModal}

@@ -3,18 +3,20 @@
 import { useState, useEffect } from 'react'
 import TrendingCard from '../TrendingCard'
 import AuthModal from '../auth/AuthModal'
-import trendingData from '../../../public/data/trending-prompts.json'
+import trendingJson from '../../../public/data/trending-prompts.json'
 import { PromptData } from '@/types'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { createClient } from '@/lib/supabase/client'
 import styles from './TrendingSection.module.css'
 
 export default function TrendingSection() {
-  const prompts = trendingData as PromptData[]
-  const triplePrompts = [...prompts, ...prompts, ...prompts]
+  // Trending: statik JSON + ileride favori sayisina gore Supabase'den
+  const prompts = trendingJson as PromptData[]
   const { user } = useAuth()
   const [favoritedIds, setFavoritedIds] = useState<Set<string>>(new Set())
   const [showAuthModal, setShowAuthModal] = useState(false)
+
+  const triplePrompts = [...prompts, ...prompts, ...prompts]
 
   useEffect(() => {
     if (!user) {

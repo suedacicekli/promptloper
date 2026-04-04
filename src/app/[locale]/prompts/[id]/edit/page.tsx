@@ -1,27 +1,32 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import Link from 'next/link'
 import Navbar from '@/components/Navbar'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { createClient } from '@/lib/supabase/client'
-import styles from './new.module.css'
+import type { Prompt } from '@/types/database'
+import styles from '../../new/new.module.css'
 
-const CATEGORIES = ['Art', 'Business', 'Design', 'Food', 'Homework', 'Instagram', 'Math', 'Photography', 'Software']
+const CATEGORIES = ['Art', 'Business', 'Design', 'Food', 'Homework', 'Instagram', 'Linkedin', 'Math', 'Photography', 'Software']
 const AI_TOOLS = [
   { value: 'chatgpt', label: 'ChatGPT' },
   { value: 'gemini', label: 'Gemini' },
   { value: 'midjourney', label: 'Midjourney' },
 ]
 
-export default function NewPromptPage() {
-  const { user, loading } = useAuth()
+export default function EditPromptPage() {
+  const { user, loading: authLoading } = useAuth()
   const router = useRouter()
   const locale = useLocale()
+  const params = useParams()
+  const promptId = params.id as string
   const t = useTranslations('promptNew')
+  const tEdit = useTranslations('promptEdit')
 
+  const [prompt, setPrompt] = useState<Prompt | null>(null)
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [promptText, setPromptText] = useState('')
@@ -36,20 +41,52 @@ export default function NewPromptPage() {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push(`/${locale}/login`)
-    }
-  }, [user, loading, router, locale])
+    async function fetchPrompt() {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('prompts')
+        .select('*')
+        .eq('id', promptId)
+        .single()
 
-  if (loading || !user) {
-    return (
-      <div className={styles.loadingScreen}>
-        <div className={styles.loadingDot} />
-      </div>
-    )
-  }
+      if (error || !data) {
+        router.push(`/${locale}`)
+        return
+      }
+
+      // Sadece sahibi duzenleyebilir
+      if (user && data.user_id !== user.id) {
+        router.push(`/${locale}/prompts/${promptId}`)
+        return
+      }
+
+      setPrompt(data)
+      setTitle(data.title)
+      setDescription(data.description)
+      setPromptText(data.prompt_text)
+      setCategory(data.category)
+      setAiTool(data.ai_tool || '')
+      setTags(data.tags?.join(', ') || '')
+      setIsPublic(data.is_public)
+      if (data.image_url) {
+        setImageUrl(data.image_url)
+        setImagePreview(data.image_url)
+      }
+      setLoading(false)
+    }
+
+    if (!authLoading && !user) {
+      router.push(`/${locale}/login`)
+      return
+    }
+
+    if (user) {
+      fetchPrompt()
+    }
+  }, [promptId, user, authLoading, router, locale])
 
   const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -65,7 +102,7 @@ export default function NewPromptPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!user) return
+    if (!user || !prompt) return
     setError('')
     setSubmitting(true)
 
@@ -73,11 +110,10 @@ export default function NewPromptPage() {
       const supabase = createClient()
       const parsedTags = tags.split(',').map(t => t.trim()).filter(Boolean)
 
-      let finalImageUrl: string | null = null
+      let finalImageUrl: string | null = prompt.image_url
 
-      // Dosya yükleme
+      // Yeni dosya yukleme
       if (imageMode === 'upload' && imageFile) {
-        // 5MB limit kontrolu
         if (imageFile.size > 5 * 1024 * 1024) {
           setError(t('imageUploadError') + ' (Max 5MB)')
           setSubmitting(false)
@@ -95,50 +131,55 @@ export default function NewPromptPage() {
               upsert: false,
             })
 
-          if (uploadError) {
-            console.error('Upload error:', uploadError)
-            // Storage bucket yoksa veya izin yoksa resim olmadan devam et
-            console.warn('Image upload failed, continuing without image')
-          } else {
+          if (!uploadError) {
             const { data: publicUrlData } = supabase.storage
               .from('prompt-images')
               .getPublicUrl(filePath)
             finalImageUrl = publicUrlData.publicUrl
           }
-        } catch (uploadErr) {
-          console.error('Upload exception:', uploadErr)
-          // Upload basarisiz olsa da prompt'u kaydet
+        } catch {
+          // Upload basarisiz olsa da guncellemeye devam et
         }
       } else if (imageMode === 'url' && imageUrl.trim()) {
         finalImageUrl = imageUrl.trim()
       }
 
-      const { error: insertError } = await supabase.from('prompts').insert({
-        user_id: user.id,
-        title: title.trim(),
-        description: description.trim(),
-        prompt_text: promptText.trim(),
-        category,
-        ai_tool: (aiTool as 'chatgpt' | 'gemini' | 'midjourney') || null,
-        image_url: finalImageUrl,
-        tags: parsedTags,
-        is_public: isPublic,
-      })
+      const { error: updateError } = await supabase
+        .from('prompts')
+        .update({
+          title: title.trim(),
+          description: description.trim(),
+          prompt_text: promptText.trim(),
+          category,
+          ai_tool: (aiTool as 'chatgpt' | 'gemini' | 'midjourney') || null,
+          image_url: finalImageUrl,
+          tags: parsedTags,
+          is_public: isPublic,
+        })
+        .eq('id', prompt.id)
 
       setSubmitting(false)
 
-      if (insertError) {
-        console.error('Insert error:', insertError)
-        setError(`${t('error')} (${insertError.message})`)
+      if (updateError) {
+        console.error('Update error:', updateError)
+        setError(`${tEdit('error')} (${updateError.message})`)
       } else {
         setSuccess(true)
-        setTimeout(() => router.push(`/${locale}/profile`), 1500)
+        setTimeout(() => router.push(`/${locale}/prompts/${prompt.id}`), 1500)
       }
     } catch (err) {
       console.error('Submit error:', err)
       setSubmitting(false)
-      setError(`${t('error')} (${err instanceof Error ? err.message : 'Unknown error'})`)
+      setError(`${tEdit('error')} (${err instanceof Error ? err.message : 'Unknown error'})`)
     }
+  }
+
+  if (loading || authLoading) {
+    return (
+      <div className={styles.loadingScreen}>
+        <div className={styles.loadingDot} />
+      </div>
+    )
   }
 
   return (
@@ -146,13 +187,13 @@ export default function NewPromptPage() {
       <Navbar />
       <div className={styles.container}>
         <div className={styles.header}>
-          <Link href={`/${locale}`} className={styles.backBtn}>
+          <Link href={`/${locale}/prompts/${promptId}`} className={styles.backBtn}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
               <path d="M19 12H5M12 5l-7 7 7 7" />
             </svg>
-            {t('backToHome')}
+            {tEdit('backToPrompt')}
           </Link>
-          <h1 className={styles.title}>{t('title')}</h1>
+          <h1 className={styles.title}>{tEdit('title')}</h1>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -192,7 +233,6 @@ export default function NewPromptPage() {
             />
           </div>
 
-          {/* Resim Alanı */}
           <div className={styles.field}>
             <label className={styles.label}>{t('image')}</label>
             <div className={styles.imageToggle}>
@@ -298,10 +338,10 @@ export default function NewPromptPage() {
           </label>
 
           {error && <p className={styles.error}>{error}</p>}
-          {success && <p className={styles.success}>{t('success')}</p>}
+          {success && <p className={styles.success}>{tEdit('saved')}</p>}
 
           <button type="submit" className={styles.submitBtn} disabled={submitting}>
-            {submitting ? t('submitting') : t('submit')}
+            {submitting ? tEdit('saving') : tEdit('save')}
           </button>
         </form>
       </div>

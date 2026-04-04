@@ -157,6 +157,32 @@
       "prompts": "Paylaşılan Promptlar"
     }
   },
+  "promptDetail": {
+    "backToHome": "Ana sayfaya dön",
+    "copyPrompt": "Promptu Kopyala",
+    "copied": "Kopyalandı!",
+    "editPrompt": "Düzenle",
+    "deletePrompt": "Sil",
+    "deleteConfirm": "Bu promptu silmek istediğine emin misin? Bu işlem geri alınamaz.",
+    "deleteSuccess": "Prompt başarıyla silindi.",
+    "deleting": "Siliniyor...",
+    "notFound": "Prompt bulunamadı",
+    "notFoundDesc": "Bu prompt silinmiş veya mevcut değil.",
+    "sharedBy": "Paylaşan",
+    "tags": "Etiketler",
+    "createdAt": "Oluşturulma",
+    "category": "Kategori",
+    "aiTool": "AI Aracı",
+    "promptText": "Prompt"
+  },
+  "promptEdit": {
+    "title": "Promptu Düzenle",
+    "save": "Değişiklikleri Kaydet",
+    "saving": "Kaydediliyor...",
+    "saved": "Prompt güncellendi!",
+    "error": "Bir hata oluştu. Tekrar dene.",
+    "backToPrompt": "Prompta dön"
+  },
   "common": {
     "loading": "Yükleniyor...",
     "error": "Hata",

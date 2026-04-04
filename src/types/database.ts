@@ -39,7 +39,7 @@ export type Database = {
       prompts: {
         Row: {
           id: string
-          user_id: string
+          user_id: string | null
           title: string
           description: string
           prompt_text: string
@@ -48,6 +48,8 @@ export type Database = {
           image_url: string | null
           tags: string[]
           is_public: boolean
+          is_trending: boolean
+          source_id: string | null
           like_count: number
           copy_count: number
           created_at: string
@@ -55,7 +57,7 @@ export type Database = {
         }
         Insert: {
           id?: string
-          user_id: string
+          user_id?: string | null
           title: string
           description: string
           prompt_text: string
@@ -64,6 +66,8 @@ export type Database = {
           image_url?: string | null
           tags?: string[]
           is_public?: boolean
+          is_trending?: boolean
+          source_id?: string | null
           like_count?: number
           copy_count?: number
           created_at?: string
@@ -78,6 +82,8 @@ export type Database = {
           image_url?: string | null
           tags?: string[]
           is_public?: boolean
+          is_trending?: boolean
+          source_id?: string | null
           like_count?: number
           copy_count?: number
           updated_at?: string

@@ -157,6 +157,32 @@
       "prompts": "Shared Prompts"
     }
   },
+  "promptDetail": {
+    "backToHome": "Back to home",
+    "copyPrompt": "Copy Prompt",
+    "copied": "Copied!",
+    "editPrompt": "Edit",
+    "deletePrompt": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this prompt? This action cannot be undone.",
+    "deleteSuccess": "Prompt deleted successfully.",
+    "deleting": "Deleting...",
+    "notFound": "Prompt not found",
+    "notFoundDesc": "This prompt may have been deleted or doesn't exist.",
+    "sharedBy": "Shared by",
+    "tags": "Tags",
+    "createdAt": "Created",
+    "category": "Category",
+    "aiTool": "AI Tool",
+    "promptText": "Prompt"
+  },
+  "promptEdit": {
+    "title": "Edit Prompt",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "saved": "Prompt updated!",
+    "error": "Something went wrong. Please try again.",
+    "backToPrompt": "Back to prompt"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Error",
