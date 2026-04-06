@@ -88,9 +88,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
   // Cikis yap fonksiyonu
   async function signOut() {
-    await supabase.auth.signOut()
+    await supabase.auth.signOut({ scope: 'local' })
     setUser(null)
     setProfile(null)
+    window.location.href = `/${window.location.pathname.split('/')[1] || 'tr'}`
   }
 
   return (

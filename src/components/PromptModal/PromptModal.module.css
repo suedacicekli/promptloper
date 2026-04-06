@@ -143,6 +143,16 @@
   background-color: rgba(255, 107, 138, 0.1);
 }
 
+.favoriteCount {
+  background: rgba(255, 107, 138, 0.2);
+  color: #ff6b8a;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 4px;
+}
+
 .copyButton {
   display: flex;
   align-items: center;

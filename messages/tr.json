@@ -23,6 +23,7 @@
     "aiTool": "AI Aracı",
     "favorite": "Favorile",
     "favorited": "Favorilendi",
+    "favoriteCount": "{count} favori",
     "loginToFavorite": "Favorilemek için giriş yap"
   },
   "promptNew": {
@@ -161,6 +162,7 @@
     "backToHome": "Ana sayfaya dön",
     "copyPrompt": "Promptu Kopyala",
     "copied": "Kopyalandı!",
+    "favoriteCount": "{count} favori",
     "editPrompt": "Düzenle",
     "deletePrompt": "Sil",
     "deleteConfirm": "Bu promptu silmek istediğine emin misin? Bu işlem geri alınamaz.",

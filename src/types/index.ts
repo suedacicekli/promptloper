@@ -11,6 +11,7 @@ export interface PromptData {
   aiTool?: AITool
   height?: number
   sourceUrl?: string
+  favoriteCount?: number
   contributor?: {
     name: string
     email: string

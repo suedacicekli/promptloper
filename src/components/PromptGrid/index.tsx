@@ -28,11 +28,12 @@ interface PromptCardProps {
   cardHeight: number
   onCopy: () => void
   isFavorited: boolean
+  favoriteCount: number
   onFavoriteClick: (promptId: string) => void
   onCardClick: () => void
 }
 
-function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy, isFavorited, onFavoriteClick, onCardClick }: PromptCardProps) {
+function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy, isFavorited, favoriteCount, onFavoriteClick, onCardClick }: PromptCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [copied, setCopied] = useState(false)
   const t = useTranslations('prompt')
@@ -93,6 +94,9 @@ function PromptCard({ promptData, useFixedHeight = false, cardHeight, onCopy, is
         >
           <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
         </svg>
+        {favoriteCount > 0 && (
+          <span className={styles.favoriteBtnCount}>{favoriteCount}</span>
+        )}
       </button>
 
       {isHovered && (
@@ -156,6 +160,7 @@ export default function PromptGrid({ prompts, noPadding = false, loading = false
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [copyCount, setCopyCount] = useState(0)
   const [favoritedIds, setFavoritedIds] = useState<Set<string>>(new Set())
+  const [favoriteCounts, setFavoriteCounts] = useState<Map<string, number>>(new Map())
   const [selectedPrompt, setSelectedPrompt] = useState<PromptData | null>(null)
   const { user } = useAuth()
 
@@ -193,6 +198,29 @@ export default function PromptGrid({ prompts, noPadding = false, loading = false
 
     loadFavorites()
   }, [user])
+
+  useEffect(() => {
+    async function loadFavoriteCounts() {
+      const supabase = createClient()
+      const promptIds = prompts.map(p => p.id)
+      const { data } = await supabase
+        .from('favorites')
+        .select('prompt_id')
+        .in('prompt_id', promptIds)
+
+      if (data) {
+        const counts = new Map<string, number>()
+        data.forEach(f => {
+          counts.set(f.prompt_id, (counts.get(f.prompt_id) || 0) + 1)
+        })
+        setFavoriteCounts(counts)
+      }
+    }
+
+    if (prompts.length > 0) {
+      loadFavoriteCounts()
+    }
+  }, [prompts])
 
   const handleCopy = () => {
     const newCount = copyCount + 1
@@ -234,6 +262,11 @@ export default function PromptGrid({ prompts, noPadding = false, loading = false
           next.delete(promptId)
           return next
         })
+        setFavoriteCounts(prev => {
+          const next = new Map(prev)
+          next.set(promptId, Math.max(0, (prev.get(promptId) || 0) - 1))
+          return next
+        })
       }
     } else {
       const { error } = await supabase
@@ -242,6 +275,11 @@ export default function PromptGrid({ prompts, noPadding = false, loading = false
 
       if (!error) {
         setFavoritedIds(prev => new Set(prev).add(promptId))
+        setFavoriteCounts(prev => {
+          const next = new Map(prev)
+          next.set(promptId, (prev.get(promptId) || 0) + 1)
+          return next
+        })
       }
     }
   }
@@ -263,6 +301,7 @@ export default function PromptGrid({ prompts, noPadding = false, loading = false
                 cardHeight={prompt.height || 300}
                 onCopy={handleCopy}
                 isFavorited={favoritedIds.has(prompt.id)}
+                favoriteCount={favoriteCounts.get(prompt.id) || 0}
                 onFavoriteClick={handleFavoriteClick}
                 onCardClick={() => setSelectedPrompt(prompt)}
               />
@@ -278,6 +317,7 @@ export default function PromptGrid({ prompts, noPadding = false, loading = false
           onClose={() => setSelectedPrompt(null)}
           promptData={selectedPrompt}
           isFavorited={favoritedIds.has(selectedPrompt.id)}
+          favoriteCount={favoriteCounts.get(selectedPrompt.id) || 0}
           onFavoriteClick={handleFavoriteClick}
           dbPromptId={getDbInfo(selectedPrompt.id)?.dbId}
           ownerId={getDbInfo(selectedPrompt.id)?.ownerId}

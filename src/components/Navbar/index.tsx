@@ -16,11 +16,17 @@ export default function Navbar() {
   const locale = useLocale()
   const { user, profile, loading, signOut } = useAuth()
 
-  // Kullanicinin gorunecek adi
-  const displayName = profile?.name || user?.email?.split('@')[0] || ''
+  // Kullanicinin gorunecek adi (profil > OAuth metadata > email)
+  const displayName = profile?.name
+    || user?.user_metadata?.full_name
+    || user?.user_metadata?.name
+    || user?.email?.split('@')[0]
+    || ''
 
-  // Avatar: profil resmi varsa onu goster, yoksa ismin bas harfi
+  // Avatar: profil > OAuth metadata > ismin bas harfi
   const avatarUrl = profile?.avatar_url
+    || user?.user_metadata?.avatar_url
+    || user?.user_metadata?.picture
   const initial = displayName.charAt(0).toUpperCase()
 
   return (

@@ -14,9 +14,31 @@ export default function TrendingSection() {
   const prompts = trendingJson as PromptData[]
   const { user } = useAuth()
   const [favoritedIds, setFavoritedIds] = useState<Set<string>>(new Set())
+  const [favoriteCounts, setFavoriteCounts] = useState<Map<string, number>>(new Map())
   const [showAuthModal, setShowAuthModal] = useState(false)
 
   const triplePrompts = [...prompts, ...prompts, ...prompts]
+
+  useEffect(() => {
+    async function loadFavoriteCounts() {
+      const supabase = createClient()
+      const promptIds = prompts.map(p => p.id)
+      const { data } = await supabase
+        .from('favorites')
+        .select('prompt_id')
+        .in('prompt_id', promptIds)
+
+      if (data) {
+        const counts = new Map<string, number>()
+        data.forEach(f => {
+          counts.set(f.prompt_id, (counts.get(f.prompt_id) || 0) + 1)
+        })
+        setFavoriteCounts(counts)
+      }
+    }
+
+    loadFavoriteCounts()
+  }, [prompts])
 
   useEffect(() => {
     if (!user) {
@@ -60,12 +82,22 @@ export default function TrendingSection() {
         next.delete(promptId)
         return next
       })
+      setFavoriteCounts(prev => {
+        const next = new Map(prev)
+        next.set(promptId, Math.max(0, (prev.get(promptId) || 0) - 1))
+        return next
+      })
     } else {
       await supabase
         .from('favorites')
         .insert({ user_id: user.id, prompt_id: promptId })
 
       setFavoritedIds(prev => new Set(prev).add(promptId))
+      setFavoriteCounts(prev => {
+        const next = new Map(prev)
+        next.set(promptId, (prev.get(promptId) || 0) + 1)
+        return next
+      })
     }
   }
 
@@ -84,6 +116,7 @@ export default function TrendingSection() {
                   key={`${prompt.id}-${index}`}
                   promptData={prompt}
                   isFavorited={favoritedIds.has(prompt.id)}
+                  favoriteCount={favoriteCounts.get(prompt.id) || 0}
                   onFavoriteClick={handleFavoriteClick}
                 />
               ))}

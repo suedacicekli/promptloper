@@ -26,6 +26,7 @@ export default function PromptDetailPage() {
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
   const [isFavorited, setIsFavorited] = useState(false)
+  const [favoriteCount, setFavoriteCount] = useState(0)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
@@ -59,13 +60,22 @@ export default function PromptDetailPage() {
         if (profileData) setOwner(profileData)
       }
 
+      // Favori sayisini cek
+      const favId = data.source_id || data.id
+      const { count } = await supabase
+        .from('favorites')
+        .select('id', { count: 'exact', head: true })
+        .eq('prompt_id', favId)
+
+      setFavoriteCount(count || 0)
+
       // Favori durumunu kontrol et
       if (user) {
         const { data: favData } = await supabase
           .from('favorites')
           .select('id')
           .eq('user_id', user.id)
-          .eq('prompt_id', data.source_id || data.id)
+          .eq('prompt_id', favId)
           .maybeSingle()
 
         setIsFavorited(!!favData)
@@ -101,11 +111,13 @@ export default function PromptDetailPage() {
         .eq('user_id', user.id)
         .eq('prompt_id', favId)
       setIsFavorited(false)
+      setFavoriteCount(prev => Math.max(0, prev - 1))
     } else {
       await supabase
         .from('favorites')
         .insert({ user_id: user.id, prompt_id: favId })
       setIsFavorited(true)
+      setFavoriteCount(prev => prev + 1)
     }
   }
 
@@ -265,7 +277,9 @@ export default function PromptDetailPage() {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill={isFavorited ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth={2}>
                   <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
                 </svg>
-                {isFavorited ? t('copied').replace('!', '') : ''}
+                {favoriteCount > 0 && (
+                  <span>{t('favoriteCount', { count: favoriteCount })}</span>
+                )}
               </button>
             </div>
 
