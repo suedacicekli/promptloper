@@ -26,7 +26,7 @@ export function useAuth() {
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const supabase = createClient()
@@ -76,14 +76,30 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
   // Cikis yap
   async function signOut() {
-    const supabase = createClient()
-    try {
-      await supabase.auth.signOut({ scope: 'local' })
-    } catch {
-      // ignore
-    }
+    // State temizle
     setUser(null)
     setProfile(null)
+
+    // Supabase session cookie'lerini temizle
+    document.cookie.split(';').forEach(cookie => {
+      const name = cookie.split('=')[0].trim()
+      if (name.startsWith('sb-') || name.includes('supabase')) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`
+      }
+    })
+
+    // Supabase signOut'u beklemeden baslat
+    const supabase = createClient()
+    supabase.auth.signOut({ scope: 'local' }).catch(() => {})
+
+    // Local storage'daki session'i da temizle
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('sb-') || key.includes('supabase')) {
+        localStorage.removeItem(key)
+      }
+    })
+
+    // Redirect
     const locale = window.location.pathname.split('/')[1] || 'tr'
     window.location.href = `/${locale}`
   }

@@ -12,7 +12,7 @@ import styles from './TrendingSection.module.css'
 
 export default function TrendingSection() {
   const { user } = useAuth()
-  const [prompts, setPrompts] = useState<PromptData[]>([])
+  const [prompts, setPrompts] = useState<PromptData[]>(trendingFallback as PromptData[])
   const [favoritedIds, setFavoritedIds] = useState<Set<string>>(new Set())
   const [favoriteCounts, setFavoriteCounts] = useState<Map<string, number>>(new Map())
   const [showAuthModal, setShowAuthModal] = useState(false)

@@ -51,6 +51,7 @@ export default function PromptShowcase({ prompts }: PromptShowcaseProps) {
           src={currentPrompt.imageSrc}
           alt={currentPrompt.title}
           fill
+          sizes="50vw"
           className={styles.image}
           priority
         />

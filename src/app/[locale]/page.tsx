@@ -19,12 +19,15 @@ const PAGE_SIZE = 12
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
-  const [prompts, setPrompts] = useState<PromptData[]>([])
+  const [prompts, setPrompts] = useState<PromptData[]>(allPromptsJson as PromptData[])
   const [promptDbMap, setPromptDbMap] = useState<Map<string, { dbId: string; ownerId: string | null }>>(new Map())
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(true)
-  const [categories, setCategories] = useState<string[]>([])
+  const [categories, setCategories] = useState<string[]>(() => {
+    const fallback = allPromptsJson as PromptData[]
+    return Array.from(new Set(fallback.map(p => p.category))).sort()
+  })
   const pageRef = useRef(0)
   const observerRef = useRef<IntersectionObserver | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
@@ -64,19 +67,12 @@ export default function Home() {
         .select('category')
         .eq('is_public', true)
 
-      if (data && data.length > 0) {
-        const unique = Array.from(new Set(data.map(p => p.category))).sort()
-        setCategories(unique)
-      } else {
-        // Fallback: statik JSON'dan kategorileri al
-        const fallback = allPromptsJson as PromptData[]
-        const unique = Array.from(new Set(fallback.map(p => p.category))).sort()
-        setCategories(unique)
-      }
-    } catch {
-      const fallback = allPromptsJson as PromptData[]
-      const unique = Array.from(new Set(fallback.map(p => p.category))).sort()
+      const dbCategories = data ? data.map(p => p.category) : []
+      const jsonCategories = (allPromptsJson as PromptData[]).map(p => p.category)
+      const unique = Array.from(new Set([...dbCategories, ...jsonCategories])).sort()
       setCategories(unique)
+    } catch {
+      // Mevcut kategoriler zaten JSON'dan yuklendi, dokunma
     }
   }, [])
 
@@ -88,22 +84,20 @@ export default function Home() {
     try {
       const data = await fetchPrompts(0, selectedCategory, searchQuery)
 
-      if (data.length > 0) {
-        const dbPrompts = data.map(dbPromptToPromptData)
-        setPrompts(dbPrompts)
-        setHasMore(data.length === PAGE_SIZE)
+      const dbPrompts = data.map(dbPromptToPromptData)
+      // DB promptlari + statik JSON'dan olmayanlari birlestir
+      const staticPrompts = (allPromptsJson as PromptData[]).filter(
+        sp => !dbPrompts.some(dp => dp.id === sp.id)
+      )
+      setPrompts([...dbPrompts, ...staticPrompts])
+      setHasMore(data.length === PAGE_SIZE)
 
-        const map = new Map<string, { dbId: string; ownerId: string | null }>()
-        data.forEach((p: Prompt) => {
-          const displayId = p.source_id || p.id
-          map.set(displayId, { dbId: p.id, ownerId: p.user_id })
-        })
-        setPromptDbMap(map)
-      } else {
-        // DB bossa statik JSON fallback
-        setPrompts(allPromptsJson as PromptData[])
-        setHasMore(false)
-      }
+      const map = new Map<string, { dbId: string; ownerId: string | null }>()
+      data.forEach((p: Prompt) => {
+        const displayId = p.source_id || p.id
+        map.set(displayId, { dbId: p.id, ownerId: p.user_id })
+      })
+      setPromptDbMap(map)
     } catch {
       // Supabase hatasi — statik JSON fallback
       setPrompts(allPromptsJson as PromptData[])

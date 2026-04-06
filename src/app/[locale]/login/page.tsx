@@ -18,8 +18,13 @@ export default function LoginPage() {
   const locale = useLocale()
   const [prompts, setPrompts] = useState<PromptData[]>([])
 
-  // DB'den rastgele 5 prompt cek (showcase icin), yoksa fallback
   useEffect(() => {
+    // Hemen fallback goster
+    const all = trendingFallback as PromptData[]
+    const shuffled = [...all].sort(() => Math.random() - 0.5).slice(0, 5)
+    setPrompts(shuffled)
+
+    // DB'den veri gelirse guncelle
     async function loadShowcase() {
       try {
         const supabase = createClient()
@@ -30,17 +35,11 @@ export default function LoginPage() {
           .limit(10)
 
         if (data && data.length > 0) {
-          const shuffled = [...data].sort(() => Math.random() - 0.5)
-          setPrompts(shuffled.slice(0, 5).map(dbPromptToPromptData))
-        } else {
-          const fallback = trendingFallback as PromptData[]
-          const shuffled = [...fallback].sort(() => Math.random() - 0.5)
-          setPrompts(shuffled.slice(0, 5))
+          const dbShuffled = [...data].sort(() => Math.random() - 0.5)
+          setPrompts(dbShuffled.slice(0, 5).map(dbPromptToPromptData))
         }
       } catch {
-        const fallback = trendingFallback as PromptData[]
-        const shuffled = [...fallback].sort(() => Math.random() - 0.5)
-        setPrompts(shuffled.slice(0, 5))
+        // Fallback zaten yuklendi
       }
     }
 
