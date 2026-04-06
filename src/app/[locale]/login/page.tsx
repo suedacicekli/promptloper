@@ -9,6 +9,7 @@ import { useAuth } from '@/components/providers/AuthProvider'
 import { PromptData } from '@/types'
 import { createClient } from '@/lib/supabase/client'
 import { dbPromptToPromptData } from '@/lib/supabase/prompts'
+import trendingFallback from '@/data/trending-prompts.json'
 import styles from './login.module.css'
 
 export default function LoginPage() {
@@ -17,19 +18,29 @@ export default function LoginPage() {
   const locale = useLocale()
   const [prompts, setPrompts] = useState<PromptData[]>([])
 
-  // DB'den rastgele 5 prompt cek (showcase icin)
+  // DB'den rastgele 5 prompt cek (showcase icin), yoksa fallback
   useEffect(() => {
     async function loadShowcase() {
-      const supabase = createClient()
-      const { data } = await supabase
-        .from('prompts')
-        .select('*')
-        .eq('is_public', true)
-        .limit(10)
+      try {
+        const supabase = createClient()
+        const { data } = await supabase
+          .from('prompts')
+          .select('*')
+          .eq('is_public', true)
+          .limit(10)
 
-      if (data && data.length > 0) {
-        const shuffled = [...data].sort(() => Math.random() - 0.5)
-        setPrompts(shuffled.slice(0, 5).map(dbPromptToPromptData))
+        if (data && data.length > 0) {
+          const shuffled = [...data].sort(() => Math.random() - 0.5)
+          setPrompts(shuffled.slice(0, 5).map(dbPromptToPromptData))
+        } else {
+          const fallback = trendingFallback as PromptData[]
+          const shuffled = [...fallback].sort(() => Math.random() - 0.5)
+          setPrompts(shuffled.slice(0, 5))
+        }
+      } catch {
+        const fallback = trendingFallback as PromptData[]
+        const shuffled = [...fallback].sort(() => Math.random() - 0.5)
+        setPrompts(shuffled.slice(0, 5))
       }
     }
 

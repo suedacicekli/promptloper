@@ -12,6 +12,7 @@ import { PromptData } from '@/types'
 import { createClient } from '@/lib/supabase/client'
 import { dbPromptToPromptData } from '@/lib/supabase/prompts'
 import type { Prompt } from '@/types/database'
+import allPromptsJson from '@/data/all-prompts.json'
 
 const PAGE_SIZE = 12
 
@@ -56,14 +57,25 @@ export default function Home() {
   }, [])
 
   const fetchCategories = useCallback(async () => {
-    const supabase = createClient()
-    const { data } = await supabase
-      .from('prompts')
-      .select('category')
-      .eq('is_public', true)
+    try {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('prompts')
+        .select('category')
+        .eq('is_public', true)
 
-    if (data) {
-      const unique = Array.from(new Set(data.map(p => p.category))).sort()
+      if (data && data.length > 0) {
+        const unique = Array.from(new Set(data.map(p => p.category))).sort()
+        setCategories(unique)
+      } else {
+        // Fallback: statik JSON'dan kategorileri al
+        const fallback = allPromptsJson as PromptData[]
+        const unique = Array.from(new Set(fallback.map(p => p.category))).sort()
+        setCategories(unique)
+      }
+    } catch {
+      const fallback = allPromptsJson as PromptData[]
+      const unique = Array.from(new Set(fallback.map(p => p.category))).sort()
       setCategories(unique)
     }
   }, [])
@@ -75,18 +87,27 @@ export default function Home() {
 
     try {
       const data = await fetchPrompts(0, selectedCategory, searchQuery)
-      const dbPrompts = data.map(dbPromptToPromptData)
-      setPrompts(dbPrompts)
-      setHasMore(data.length === PAGE_SIZE)
 
-      const map = new Map<string, { dbId: string; ownerId: string | null }>()
-      data.forEach((p: Prompt) => {
-        const displayId = p.source_id || p.id
-        map.set(displayId, { dbId: p.id, ownerId: p.user_id })
-      })
-      setPromptDbMap(map)
+      if (data.length > 0) {
+        const dbPrompts = data.map(dbPromptToPromptData)
+        setPrompts(dbPrompts)
+        setHasMore(data.length === PAGE_SIZE)
+
+        const map = new Map<string, { dbId: string; ownerId: string | null }>()
+        data.forEach((p: Prompt) => {
+          const displayId = p.source_id || p.id
+          map.set(displayId, { dbId: p.id, ownerId: p.user_id })
+        })
+        setPromptDbMap(map)
+      } else {
+        // DB bossa statik JSON fallback
+        setPrompts(allPromptsJson as PromptData[])
+        setHasMore(false)
+      }
     } catch {
-      // Hata durumunda bos liste
+      // Supabase hatasi — statik JSON fallback
+      setPrompts(allPromptsJson as PromptData[])
+      setHasMore(false)
     } finally {
       setLoading(false)
     }

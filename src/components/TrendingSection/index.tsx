@@ -7,6 +7,7 @@ import { PromptData } from '@/types'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { createClient } from '@/lib/supabase/client'
 import { dbPromptToPromptData } from '@/lib/supabase/prompts'
+import trendingFallback from '@/data/trending-prompts.json'
 import styles from './TrendingSection.module.css'
 
 export default function TrendingSection() {
@@ -16,20 +17,26 @@ export default function TrendingSection() {
   const [favoriteCounts, setFavoriteCounts] = useState<Map<string, number>>(new Map())
   const [showAuthModal, setShowAuthModal] = useState(false)
 
-  // Trending promptlari DB'den cek
+  // Trending promptlari DB'den cek, yoksa statik JSON fallback
   useEffect(() => {
     async function loadTrending() {
-      const supabase = createClient()
-      const { data } = await supabase
-        .from('prompts')
-        .select('*')
-        .eq('is_public', true)
-        .eq('is_trending', true)
-        .order('created_at', { ascending: false })
-        .limit(10)
+      try {
+        const supabase = createClient()
+        const { data } = await supabase
+          .from('prompts')
+          .select('*')
+          .eq('is_public', true)
+          .eq('is_trending', true)
+          .order('created_at', { ascending: false })
+          .limit(10)
 
-      if (data && data.length > 0) {
-        setPrompts(data.map(dbPromptToPromptData))
+        if (data && data.length > 0) {
+          setPrompts(data.map(dbPromptToPromptData))
+        } else {
+          setPrompts(trendingFallback as PromptData[])
+        }
+      } catch {
+        setPrompts(trendingFallback as PromptData[])
       }
     }
 
