@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
+import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
+import { useTranslations } from 'next-intl'
 import Navbar from '@/components/Navbar'
 import TrendingSection from '@/components/TrendingSection'
 import CategoryFilter from '@/components/CategoryFilter'
@@ -11,69 +12,152 @@ import { PromptData } from '@/types'
 import { createClient } from '@/lib/supabase/client'
 import { dbPromptToPromptData } from '@/lib/supabase/prompts'
 import type { Prompt } from '@/types/database'
-import allPromptsJson from '../../../public/data/all-prompts.json'
+
+const PAGE_SIZE = 12
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState('')
-  const [allPrompts, setAllPrompts] = useState<PromptData[]>(allPromptsJson as PromptData[])
+  const [prompts, setPrompts] = useState<PromptData[]>([])
   const [promptDbMap, setPromptDbMap] = useState<Map<string, { dbId: string; ownerId: string | null }>>(new Map())
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [categories, setCategories] = useState<string[]>([])
+  const pageRef = useRef(0)
+  const observerRef = useRef<IntersectionObserver | null>(null)
+  const sentinelRef = useRef<HTMLDivElement | null>(null)
+  const t = useTranslations('common')
 
-  const fetchPrompts = useCallback(async () => {
-    try {
-      const supabase = createClient()
-      const { data, error } = await supabase
-        .from('prompts')
-        .select('*')
-        .eq('is_public', true)
-        .order('created_at', { ascending: false })
+  const fetchPrompts = useCallback(async (page: number, category?: string, search?: string) => {
+    const supabase = createClient()
+    const from = page * PAGE_SIZE
+    const to = from + PAGE_SIZE - 1
 
-      if (error) throw error
+    let query = supabase
+      .from('prompts')
+      .select('*')
+      .eq('is_public', true)
+      .order('created_at', { ascending: false })
+      .range(from, to)
 
-      if (data && data.length > 0) {
-        const dbPrompts = data.map(dbPromptToPromptData)
-        const staticPrompts = (allPromptsJson as PromptData[]).filter(
-          sp => !dbPrompts.some(dp => dp.id === sp.id)
-        )
-        setAllPrompts([...dbPrompts, ...staticPrompts])
+    if (category && category !== 'All') {
+      query = query.eq('category', category)
+    }
 
-        // DB bilgilerini map'e kaydet (modal'da edit/delete icin)
-        const map = new Map<string, { dbId: string; ownerId: string | null }>()
-        data.forEach((p: Prompt) => {
-          const displayId = p.source_id || p.id
-          map.set(displayId, { dbId: p.id, ownerId: p.user_id })
-        })
-        setPromptDbMap(map)
-      }
-    } catch {
-      // Supabase hatasi durumunda statik JSON kullanilir
-    } finally {
-      setLoading(false)
+    if (search) {
+      query = query.or(`title.ilike.%${search}%,description.ilike.%${search}%,prompt_text.ilike.%${search}%`)
+    }
+
+    const { data, error } = await query
+
+    if (error) throw error
+    return data || []
+  }, [])
+
+  const fetchCategories = useCallback(async () => {
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('prompts')
+      .select('category')
+      .eq('is_public', true)
+
+    if (data) {
+      const unique = Array.from(new Set(data.map(p => p.category))).sort()
+      setCategories(unique)
     }
   }, [])
 
+  // Ilk yukleme
+  const loadInitial = useCallback(async () => {
+    setLoading(true)
+    pageRef.current = 0
+
+    try {
+      const data = await fetchPrompts(0, selectedCategory, searchQuery)
+      const dbPrompts = data.map(dbPromptToPromptData)
+      setPrompts(dbPrompts)
+      setHasMore(data.length === PAGE_SIZE)
+
+      const map = new Map<string, { dbId: string; ownerId: string | null }>()
+      data.forEach((p: Prompt) => {
+        const displayId = p.source_id || p.id
+        map.set(displayId, { dbId: p.id, ownerId: p.user_id })
+      })
+      setPromptDbMap(map)
+    } catch {
+      // Hata durumunda bos liste
+    } finally {
+      setLoading(false)
+    }
+  }, [fetchPrompts, selectedCategory, searchQuery])
+
+  // Daha fazla yukle
+  const loadMore = useCallback(async () => {
+    if (loadingMore || !hasMore) return
+    setLoadingMore(true)
+
+    try {
+      const nextPage = pageRef.current + 1
+      const data = await fetchPrompts(nextPage, selectedCategory, searchQuery)
+
+      if (data.length > 0) {
+        const dbPrompts = data.map(dbPromptToPromptData)
+        setPrompts(prev => [...prev, ...dbPrompts])
+        pageRef.current = nextPage
+        setHasMore(data.length === PAGE_SIZE)
+
+        setPromptDbMap(prev => {
+          const map = new Map(prev)
+          data.forEach((p: Prompt) => {
+            const displayId = p.source_id || p.id
+            map.set(displayId, { dbId: p.id, ownerId: p.user_id })
+          })
+          return map
+        })
+      } else {
+        setHasMore(false)
+      }
+    } catch {
+      // Sessizce devam et
+    } finally {
+      setLoadingMore(false)
+    }
+  }, [fetchPrompts, loadingMore, hasMore, selectedCategory, searchQuery])
+
   useEffect(() => {
-    fetchPrompts()
-  }, [fetchPrompts])
+    fetchCategories()
+  }, [fetchCategories])
 
-  const categories = useMemo(() => {
-    const uniqueCategories = Array.from(new Set(allPrompts.map(p => p.category)))
-    return uniqueCategories.sort()
-  }, [allPrompts])
+  useEffect(() => {
+    loadInitial()
+  }, [loadInitial])
 
-  const filteredPrompts = useMemo(() => {
-    return allPrompts.filter(prompt => {
-      const matchesCategory = selectedCategory === 'All' || prompt.category === selectedCategory
-      const matchesSearch = searchQuery === '' ||
-        prompt.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        prompt.prompt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        prompt.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (prompt.aiTool && prompt.aiTool.toLowerCase().includes(searchQuery.toLowerCase()))
+  // Infinite scroll observer
+  useEffect(() => {
+    if (observerRef.current) {
+      observerRef.current.disconnect()
+    }
 
-      return matchesCategory && matchesSearch
-    })
-  }, [allPrompts, selectedCategory, searchQuery])
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+          loadMore()
+        }
+      },
+      { threshold: 0.1 }
+    )
+
+    if (sentinelRef.current) {
+      observerRef.current.observe(sentinelRef.current)
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect()
+      }
+    }
+  }, [hasMore, loadingMore, loading, loadMore])
 
   return (
     <main className="min-h-screen w-full bg-black">
@@ -89,11 +173,36 @@ export default function Home() {
         onChange={setSearchQuery}
       />
       <PromptGrid
-        prompts={filteredPrompts}
+        prompts={prompts}
         loading={loading}
         promptDbMap={promptDbMap}
-        onPromptDeleted={fetchPrompts}
+        onPromptDeleted={loadInitial}
       />
+
+      {/* Infinite scroll sentinel */}
+      {!loading && hasMore && (
+        <div
+          ref={sentinelRef}
+          style={{ height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          {loadingMore && (
+            <div style={{
+              width: '8px',
+              height: '8px',
+              borderRadius: '50%',
+              background: '#C6F449',
+              animation: 'pulse 1.2s ease-in-out infinite'
+            }} />
+          )}
+        </div>
+      )}
+
+      {!loading && !hasMore && prompts.length > 0 && (
+        <div style={{ textAlign: 'center', padding: '2rem', color: 'rgba(255,255,255,0.3)', fontSize: '0.875rem' }}>
+          {t('noMoreResults')}
+        </div>
+      )}
+
       <Footer />
     </main>
   )

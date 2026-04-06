@@ -34,23 +34,36 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
   // Profil bilgilerini veritabanindan cek
   async function fetchProfile(userId: string) {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single()
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle()
 
-    setProfile(data)
+      setProfile(data)
+    } catch {
+      // Profil bulunamazsa null kalir
+    }
   }
 
   useEffect(() => {
     // 1. Sayfa yuklendiginde mevcut oturumu kontrol et
     async function getInitialSession() {
       try {
-        const { data: { user } } = await supabase.auth.getUser()
-        setUser(user)
-        if (user) {
-          await fetchProfile(user.id)
+        // Once session kontrol et (getUser network calisi yapar, getSession local cache'den okur)
+        const { data: { session } } = await supabase.auth.getSession()
+
+        if (session?.user) {
+          setUser(session.user)
+          await fetchProfile(session.user.id)
+        } else {
+          // Session yoksa getUser ile de dene (cookie'den)
+          const { data: { user } } = await supabase.auth.getUser()
+          if (user) {
+            setUser(user)
+            await fetchProfile(user.id)
+          }
         }
       } catch {
         // Sessizce devam et
@@ -88,10 +101,19 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
 
   // Cikis yap fonksiyonu
   async function signOut() {
-    await supabase.auth.signOut({ scope: 'local' })
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+    } catch {
+      // signOut hatasi olsa bile devam et
+    }
+
+    // State'i temizle
     setUser(null)
     setProfile(null)
-    window.location.href = `/${window.location.pathname.split('/')[1] || 'tr'}`
+
+    // Sayfayi yenile — cookie'lerin temizlenmesi icin
+    const locale = window.location.pathname.split('/')[1] || 'tr'
+    window.location.href = `/${locale}`
   }
 
   return (

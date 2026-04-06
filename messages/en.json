@@ -196,6 +196,7 @@
     "search": "Search",
     "filter": "Filter",
     "sort": "Sort",
-    "clear": "Clear"
+    "clear": "Clear",
+    "noMoreResults": "All prompts loaded"
   }
 }

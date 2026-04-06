@@ -7,7 +7,8 @@ import PromptShowcase from '@/components/auth/PromptShowcase'
 import LoginForm from '@/components/auth/LoginForm'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { PromptData } from '@/types'
-import trendingData from '../../../../public/data/trending-prompts.json'
+import { createClient } from '@/lib/supabase/client'
+import { dbPromptToPromptData } from '@/lib/supabase/prompts'
 import styles from './login.module.css'
 
 export default function LoginPage() {
@@ -16,11 +17,23 @@ export default function LoginPage() {
   const locale = useLocale()
   const [prompts, setPrompts] = useState<PromptData[]>([])
 
-  // Trending promptlardan rastgele 5 tane sec
+  // DB'den rastgele 5 prompt cek (showcase icin)
   useEffect(() => {
-    const allPrompts = trendingData as PromptData[]
-    const shuffled = [...allPrompts].sort(() => Math.random() - 0.5)
-    setPrompts(shuffled.slice(0, 5))
+    async function loadShowcase() {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('prompts')
+        .select('*')
+        .eq('is_public', true)
+        .limit(10)
+
+      if (data && data.length > 0) {
+        const shuffled = [...data].sort(() => Math.random() - 0.5)
+        setPrompts(shuffled.slice(0, 5).map(dbPromptToPromptData))
+      }
+    }
+
+    loadShowcase()
   }, [])
 
   // Zaten giris yapmissa ana sayfaya yonlendir

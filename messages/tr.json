@@ -196,6 +196,7 @@
     "search": "Ara",
     "filter": "Filtrele",
     "sort": "Sırala",
-    "clear": "Temizle"
+    "clear": "Temizle",
+    "noMoreResults": "Tüm promptlar yüklendi"
   }
 }

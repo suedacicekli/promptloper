@@ -12,8 +12,6 @@ import { useAuth } from '@/components/providers/AuthProvider'
 import { createClient } from '@/lib/supabase/client'
 import type { Prompt, AIGeneration } from '@/types/database'
 import type { PromptData } from '@/types'
-import allPromptsData from '../../../../public/data/all-prompts.json'
-import trendingPromptsData from '../../../../public/data/trending-prompts.json'
 import styles from './profile.module.css'
 
 type Tab = 'prompts' | 'favorites' | 'aiHistory'
@@ -74,31 +72,19 @@ export default function ProfilePage() {
     setAiHistory(historyRes.data || [])
 
     if (favoritesRes.data && favoritesRes.data.length > 0) {
-      const favIds = new Set(favoritesRes.data.map(f => f.prompt_id))
+      const favIds = favoritesRes.data.map(f => f.prompt_id)
 
-      const staticPrompts = [
-        ...(allPromptsData as PromptData[]),
-        ...(trendingPromptsData as PromptData[]),
-      ]
-      const staticFavs = staticPrompts.filter(p => favIds.has(p.id))
+      // Tum favori promptlari DB'den cek (source_id veya id ile esles)
+      const { data: favPrompts } = await supabase
+        .from('prompts')
+        .select('*')
+        .or(favIds.map(id => `id.eq.${id},source_id.eq.${id}`).join(','))
 
-      const dbFavIds = favoritesRes.data
-        .map(f => f.prompt_id)
-        .filter(id => !staticPrompts.some(sp => sp.id === id))
-
-      let dbFavs: PromptData[] = []
-      if (dbFavIds.length > 0) {
-        const { data: dbFavPrompts } = await supabase
-          .from('prompts')
-          .select('*')
-          .in('id', dbFavIds)
-
-        if (dbFavPrompts) {
-          dbFavs = dbFavPrompts.map(dbPromptToPromptData)
-        }
+      if (favPrompts) {
+        setMyFavorites(favPrompts.map(dbPromptToPromptData))
+      } else {
+        setMyFavorites([])
       }
-
-      setMyFavorites([...dbFavs, ...staticFavs])
     } else {
       setMyFavorites([])
     }

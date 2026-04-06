@@ -3,23 +3,44 @@
 import { useState, useEffect } from 'react'
 import TrendingCard from '../TrendingCard'
 import AuthModal from '../auth/AuthModal'
-import trendingJson from '../../../public/data/trending-prompts.json'
 import { PromptData } from '@/types'
 import { useAuth } from '@/components/providers/AuthProvider'
 import { createClient } from '@/lib/supabase/client'
+import { dbPromptToPromptData } from '@/lib/supabase/prompts'
 import styles from './TrendingSection.module.css'
 
 export default function TrendingSection() {
-  // Trending: statik JSON + ileride favori sayisina gore Supabase'den
-  const prompts = trendingJson as PromptData[]
   const { user } = useAuth()
+  const [prompts, setPrompts] = useState<PromptData[]>([])
   const [favoritedIds, setFavoritedIds] = useState<Set<string>>(new Set())
   const [favoriteCounts, setFavoriteCounts] = useState<Map<string, number>>(new Map())
   const [showAuthModal, setShowAuthModal] = useState(false)
 
+  // Trending promptlari DB'den cek
+  useEffect(() => {
+    async function loadTrending() {
+      const supabase = createClient()
+      const { data } = await supabase
+        .from('prompts')
+        .select('*')
+        .eq('is_public', true)
+        .eq('is_trending', true)
+        .order('created_at', { ascending: false })
+        .limit(10)
+
+      if (data && data.length > 0) {
+        setPrompts(data.map(dbPromptToPromptData))
+      }
+    }
+
+    loadTrending()
+  }, [])
+
   const triplePrompts = [...prompts, ...prompts, ...prompts]
 
   useEffect(() => {
+    if (prompts.length === 0) return
+
     async function loadFavoriteCounts() {
       const supabase = createClient()
       const promptIds = prompts.map(p => p.id)
@@ -100,6 +121,8 @@ export default function TrendingSection() {
       })
     }
   }
+
+  if (prompts.length === 0) return null
 
   return (
     <>
